@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RAK | rak.tf</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#000;color:#fff;overflow-y:auto;min-height:100vh;transition:background .4s}
+.light-mode{background:#f9f9f9;color:#000}
+.light-mode .card,.light-mode #header,.light-mode .invoice,.light-mode .auth-box{background:#111;color:#fff}
+
+.page{position:fixed;inset:0;opacity:0;pointer-events:none;transition:opacity 0.6s ease}
+.page.active{opacity:1;pointer-events:all;z-index:10}
+
+#auth-page{display:flex;align-items:center;justify-content:center;height:100vh;background:#000}
+.auth-box{background:rgba(25,25,25,0.98);padding:80px 60px;border-radius:40px;border:2px solid #333;max-width:440px;width:92%;text-align:center}
+.auth-box h1{font-size:80px;color:#ff0033;margin-bottom:50px;letter-spacing:-3px}
+/* Added style for error message */
+#auth-error {
+  color: #ff0033;
+  margin-bottom: 15px;
+  font-size: 16px;
+  min-height: 20px; /* Ensures consistent layout even when no error */
+}
+input{width:100%;padding:20px;margin:12px 0;background:#000;border:1px solid #333;border-radius:18px;color:#fff;font-size:19px}
+.auth-btn{background:#ff0033;color:#000;padding:20px;font-weight:900;border:none;border-radius:18px;width:100%;font-size:24px;cursor:pointer;margin-top:25px}
+.auth-btn:hover{transform:scale(1.05)}
+.switch{margin-top:25px;color:#888;font-size:17px;cursor:pointer}
+.switch a{color:#ff0033;font-weight:700}
+
+#header{position:fixed;top:0;left:0;right:0;height:100px;background:rgba(0,0,0,0.97);backdrop-filter:blur(24px);border-bottom:1px solid #222;align-items:center;justify-content:space-between;padding:0 30px;z-index:999;display:none}
+.logo{color:#ff0033;font-size:36px;font-weight:900}
+.tabs{display:flex;gap:45px;flex:1;justify-content:center;align-items:center}
+.tab{color:#888;font-weight:700;cursor:pointer;font-size:18px;position:relative}
+.tab.active{color:#ff0033}
+.tab.active::after{content:'';position:absolute;bottom:-16px;left:0;right:0;height:5px;background:#ff0033;border-radius:3px}
+.right{display:flex;gap:50px;align-items:center}
+.tg-group{display:flex;gap:40px}
+.tg-col{text-align:center;cursor:pointer}
+.tg-icon{width:38px;height:38px;margin-bottom:8px}
+.cart{position:relative;color:#ff0033;cursor:pointer;font-weight:700}
+.cart::after{content:attr(data-c);position:absolute;top:-10px;right:-18px;background:#ff0033;color:#000;width:28px;height:28px;border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center}
+.burger{display:none;font-size:36px;color:#ff0033;cursor:pointer}
+
+@media(max-width:768px){
+  .tabs{position:fixed;top:100px;left:0;right:0;background:#000;flex-direction:column;padding:20px 0;display:none;z-index:998;border-bottom:1px solid #222}
+  .tabs.show{display:flex}
+  .burger{display:block}
+}
+
+.container{padding:140px 20px 80px;max-width:1500px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:32px}
+.card{background:#0c0c0c;border:1px solid #222;border-radius:32px;overflow:hidden;cursor:pointer;transition:0.4s}
+.card:hover{transform:translateY(-20px);border-color:#ff0033}
+.card img{max-width:180px;height:120px;object-fit:contain;margin:20px auto;display:block;background:#000}
+.info{padding:36px;text-align:center}
+.name{font-size:23px;font-weight:800}
+.price{font-size:48px;color:#ff0033;font-weight:900}
+
+.invoice{background:#111;border:4px solid #ff0033;border-radius:40px;padding:40px;max-width:480px;margin:40px auto;width:92%;text-align:center}
+@media(max-width:768px){.invoice{padding:30px}}
+
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.95);backdrop-filter:blur(15px);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal.active{display:flex}
+.modal-box{background:#111;border:4px solid #ff0033;border-radius:40px;padding:50px 40px;max-width:480px;width:90%;text-align:center;position:relative}
+.close{position:absolute;top:15px;right:15px;font-size:40px;color:#888;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- AUTH -->
+<div id="auth-page" class="page active">
+  <div class="auth-box">
+    <h1>RAK</h1>
+    <p id="auth-error"></p> <!-- Added for error messages -->
+    <input type="text" id="user" placeholder="Username">
+    <input type="password" id="pass" placeholder="Password">
+    <button class="auth-btn" id="main-auth-btn" onclick="handleAuth()">LOGIN</button>
+    <div class="switch" onclick="toggleAuthMode()">Don't have an account? <a id="auth-link">Register</a></div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div id="header">
+  <div class="logo">RAK.tf</div>
+  <div class="tabs">
+    <div class="tab active" onclick="show('ccs')">CCs</div>
+    <div class="tab" onclick="show('hand')">HAND</div>
+    <div class="tab" onclick="show('logs')">LOGS</div>
+    <div class="tab" onclick="show('leads')">LEADS</div>
+    <div class="tab" onclick="show('profile-page')">PROFILE</div>
+  </div>
+  <div class="right">
+    <div class="tg-group">
+      <div class="tg-col" onclick="window.open('https://t.me/addlist/WIPPhibFLBI4MTZhV','_blank')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon"><div>VOUCHES</div>
+      </div>
+      <div class="tg-col" onclick="window.open('https://t.me/raksupporteam','_blank')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-icon"><div>SUPPORT</div>
+      </div>
+    </div>
+    <div class="cart" data-c="0" onclick="show('cart')">CART (<span id="cart-count">0</span>)</div>
+    <div class="burger" onclick="document.querySelector('.tabs').classList.toggle('show')">Menu</div>
+  </div>
+</div>
+
+<!-- PAGES -->
+<div class="container page active" id="ccs"><div class="grid" id="grid-ccs"></div></div>
+<div class="container page" id="hand"><div class="grid" id="grid-hand"></div></div>
+<div class="container page" id="logs"><div class="grid" id="grid-logs"></div></div>
+<div class="container page" id="leads"><div class="grid" id="grid-leads"></div></div>
+
+<div class="container page" id="profile-page" style="text-align:center;padding-top:140px">
+  <h2 style="font-size:42px;color:#ff0033" id="username-display">User</h2>
+  <button onclick="document.body.classList.toggle('light-mode')" style="background:#ff0033;color:#000;padding:15px 40px;border:none;border-radius:20px;font-size:20px;margin:30px;cursor:pointer">Toggle Light/Dark</button>
+  <div style="background:#111;padding:40px;border-radius:28px;max-width:600px;margin:40px auto">
+    <h3 style="color:#ff0033;font-size:28px;margin-bottom:20px">Purchase History</h3>
+    <div id="history-list" style="color:#aaa">No orders yet</div>
+  </div>
+</div>
+
+<div class="container page" id="cart" style="text-align:center">
+  <h2 style="color:#ff0033;font-size:56px;margin:60px 0">CART</h2>
+  <div id="cart-items" style="max-width:800px;margin:auto"></div>
+  <div id="total" style="font-size:52px;color:#ff0033;margin:50px 0;font-weight:900">$0.00</div>
+  <button onclick="checkout()" style="background:#ff0033;color:#000;padding:25px 100px;border:none;border-radius:32px;font-size:32px;cursor:pointer">CHECKOUT</button>
+</div>
+
+<div id="payment-page" class="page">
+  <div class="invoice">
+    <h2 style="font-size:46px;color:#ff0033">PAY WITH <span id="coin">BTC</span></h2>
+    <div id="amount-usd" style="font-size:56px;color:#ff0033;margin:30px 0">$0.00</div>
+    <div id="amount-crypto" style="font-size:42px;color:#0f9;margin:20px 0">0.00000000 <span id="coin2">BTC</span></div>
+    <p style="font-size:22px;margin:30px 0">Send exact amount to:</p>
+    <code id="addr" style="background:#000;padding:18px;border-radius:14px;word-break:break-all;margin:20px auto;max-width:90%;font-size:15px;display:block"></code>
+    <div style="font-size:44px;color:#ff0033;margin:40px 0" id="timer">30:00</div>
+    <input type="text" placeholder="Enter TXID" id="txid" style="width:90%;max-width:460px;padding:18px;background:#000;border:1px solid #444;border-radius:16px;color:#fff;font-size:18px;margin:20px auto;display:block">
+    <button style="background:#0f9;color:#000;padding:20px 80px;border:none;border-radius:20px;font-size:24px;margin:20px auto;display:block;width:90%;max-width:460px" onclick="verify()">VERIFY PAYMENT</button>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <div class="close" onclick="closeModal()">×</div>
+    <img id="m-logo" style="max-height:130px;margin:20px 0">
+    <h3 id="m-name" style="font-size:36px;margin:20px 0"></h3>
+    <p id="m-desc" style="color:#aaa;font-size:18px;line-height:1.7"></p>
+    <div style="font-size:52px;color:#ff0033;margin:30px 0">$<span id="m-price"></span></div>
+    <button style="background:#ff0033;color:#000;padding:22px;width:100%;border:none;border-radius:20px;font-size:26px;cursor:pointer" onclick="addToCart(currentItem)">ADD TO CART</button>
+  </div>
+</div>
+
+<script>
+const products = {
+  ccs: [
+    {n:"Spammed CCs",p:8.50,l:"https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"},
+    {n:"MC Spammed",p:8.50,l:"https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg"}
+  ],
+  hand: [{n:"Hand-Checked USA",p:30,l:"https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png"}],
+  logs: [
+    {n:"Outlook Logs",p:15,l:"https://cdn-icons-png.flaticon.com/512/732/732220.png"},
+    {n:"Discover Logs",p:22,l:"https://upload.wikimedia.org/wikipedia/commons/5/57/Discover_Card_logo.svg"}
+  ],
+  leads: [
+    {n:"USA Leads",p:20,l:"https://cdn-icons-png.flaticon.com/512/847/847969.png"},
+    {n:"Single Lead/Fullz",p:5,l:"https://cdn-icons-png.flaticon.com/512/847/847969.png"}
+  ]
+};
+const addresses = { BTC: "1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy", ETH: "0x8cBc2AD1dF8c0e42465a9E80c1B84FeB0dEE0D87", LTC: "LhWYtDeDPfUtEpbJC2Pho7xQTXfEEXj6UY" };
+const rates = { BTC: 86723, ETH: 2910, LTC: 85 };
+let cart = JSON.parse(localStorage.getItem("rak_cart") || "[]");
+let history = JSON.parse(localStorage.getItem("rak_history") || "[]");
+let currentItem = null;
+
+// New variables for authentication
+let registeredUsers = JSON.parse(localStorage.getItem("rak_users") || "{}");
+let isLoginMode = true; // Track if we are in login or register mode
+
+updateCartCount();
+
+// Modified function to handle both login and register
+function handleAuth() {
+  let username = document.getElementById("user").value.trim();
+  let password = document.getElementById("pass").value.trim();
+  const authError = document.getElementById("auth-error");
+  authError.textContent = ""; // Clear previous errors
+
+  if (!username || !password) {
+    authError.textContent = "Please enter both username and password.";
+    return;
+  }
+
+  if (isLoginMode) {
+    // Login Logic
+    if (registeredUsers[username] && registeredUsers[username] === password) {
+      localStorage.setItem("rak_user", JSON.stringify({u: username}));
+      document.getElementById("auth-page").classList.remove("active");
+      document.getElementById("header").style.display = "flex";
+      document.getElementById("username-display").textContent = username;
+      show("ccs");
+      // alert("Login successful!"); // Removed for smoother UX
+    } else {
+      authError.textContent = "Invalid username or password.";
+    }
+  } else {
+    // Register Logic
+    if (registeredUsers[username]) {
+      authError.textContent = "Username already exists. Please choose another.";
+    } else {
+      registeredUsers[username] = password;
+      localStorage.setItem("rak_users", JSON.stringify(registeredUsers));
+      localStorage.setItem("rak_user", JSON.stringify({u: username})); // Log in new user
+      document.getElementById("auth-page").classList.remove("active");
+      document.getElementById("header").style.display = "flex";
+      document.getElementById("username-display").textContent = username;
+      show("ccs");
+      // alert("Registration successful! You are now logged in."); // Removed for smoother UX
+    }
+  }
+}
+
+// New function to toggle between login and register forms
+function toggleAuthMode() {
+  isLoginMode = !isLoginMode;
+  const mainAuthBtn = document.getElementById("main-auth-btn");
+  const authLink = document.getElementById("auth-link");
+  const authError = document.getElementById("auth-error");
+
+  authError.textContent = ""; // Clear errors on mode switch
+  document.getElementById("user").value = ""; // Clear inputs on mode switch
+  document.getElementById("pass").value = "";
+
+  if (isLoginMode) {
+    mainAuthBtn.textContent = "LOGIN";
+    authLink.textContent = "Register";
+    document.querySelector(".switch").innerHTML = `Don't have an account? <a id="auth-link" onclick="toggleAuthMode()">Register</a>`;
+  } else {
+    mainAuthBtn.textContent = "REGISTER";
+    authLink.textContent = "Login";
+    document.querySelector(".switch").innerHTML = `Already have an account? <a id="auth-link" onclick="toggleAuthMode()">Login</a>`;
+  }
+}
+
+
+// Modified initial login check
+if (localStorage.getItem("rak_user")) {
+  let currentUser = JSON.parse(localStorage.getItem("rak_user")).u;
+  document.getElementById("auth-page").classList.remove("active");
+  document.getElementById("header").style.display = "flex";
+  document.getElementById("username-display").textContent = currentUser;
+  show("ccs");
+}
+
+
+function show(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.querySelector(`.tab[onclick="show('${page}')"]`)?.classList.add("active");
+  if (page === "cart") renderCart();
+  if (page === "profile-page") renderHistory();
+}
+
+function openModal(item) {
+  currentItem = item;
+  document.getElementById("m-logo").src = item.l;
+  document.getElementById("m-name").textContent = item.n;
+  document.getElementById("m-price").textContent = item.p;
+  let warning = item.n.includes("Lead") || item.n.includes("Fullz") ? "Don't buy if you don't know how to use this." : "";
+  document.getElementById("m-desc").textContent = warning || "High quality product.";
+  document.getElementById("modal").classList.add("active");
+}
+function closeModal() { document.getElementById("modal").classList.remove("active"); }
+
+Object.keys(products).forEach(cat => {
+  products[cat].forEach(item => {
+    const card = document.createElement("div"); card.className = "card";
+    card.innerHTML = `<img src="${item.l}">
+      <div class="info">
+        <div class="name">${item.n}</div>
+        <div class="price">$${item.p}</div>
+        <button style="background:#ff0033;color:#000;padding:18px;margin-top:18px;border:none;border-radius:16px;width:100%;font-weight:900;font-size:18px;cursor:pointer" onclick='openModal(${JSON.stringify(item)})'>BUY</button>
+      </div>`;
+    document.getElementById("grid-"+cat).appendChild(card);
+  });
+});
+
+function addToCart(item) {
+  cart.push(item);
+  localStorage.setItem("rak_cart", JSON.stringify(cart));
+  updateCartCount();
+  closeModal();
+  alert(item.n + " added to cart!");
+}
+function updateCartCount() {
+  const count = cart.length;
+  document.getElementById("cart-count").textContent = count;
+  document.querySelector(".cart").dataset.c = count;
+}
+function renderCart() {
+  const total = cart.reduce((a,x) => a + x.p, 0).toFixed(2);
+  document.getElementById("total").textContent = "$" + total;
+  document.getElementById("cart-items").innerHTML = cart.length ? cart.map((x,i) => `
+    <div style="background:#111;padding:25px;border-radius:16px;margin:15px 0;display:flex;justify-content:space-between;align-items:center">
+      <div><strong>${x.n}</strong> - $${x.p}</div>
+      <button style="background:#333;padding:10px 20px;border-radius:10px" onclick="removeFromCart(${i})">Remove</button>
+    </div>`).join("") : "<p style='color:#666;font-size:22px'>Cart is empty</p>";
+}
+function removeFromCart(i) {
+  cart.splice(i,1);
+  localStorage.setItem("rak_cart", JSON.stringify(cart));
+  updateCartCount();
+  renderCart();
+}
+function checkout() {
+  if (!cart.length) return alert("Cart is empty");
+  pay("BTC");
+}
+function pay(coin) {
+  const totalUSD = cart.reduce((a,x) => a + x.p, 0);
+  const cryptoAmount = (totalUSD / rates[coin]).toFixed(8);
+  document.getElementById("coin").textContent = coin;
+  document.getElementById("coin2").textContent = coin;
+  document.getElementById("amount-usd").textContent = "$" + totalUSD.toFixed(2);
+  document.getElementById("amount-crypto").textContent = cryptoAmount + " " + coin;
+  document.getElementById("addr").textContent = addresses[coin];
+  show("payment-page");
+  let s = 1800;
+  const timer = setInterval(() => {
+    s--;
+    const m = String(Math.floor(s/60)).padStart(2,"0");
+    const sec = String(s%60).padStart(2,"0");
+    document.getElementById("timer").textContent = m + ":" + sec;
+    if (s <= 0) clearInterval(timer);
+  }, 1000);
+}
+function verify() {
+  const tx = document.getElementById("txid").value.trim();
+  if (!tx || tx.length < 50) return alert("Invalid TXID");
+  setTimeout(() => {
+    if (Math.random() > 0.2) { // Simulate 80% success rate
+      alert("Payment confirmed! Check Telegram in 2-5 mins.");
+      history.push({date: new Date().toLocaleString(), items: cart.map(x=>x.n).join(", "), total: cart.reduce((a,x)=>a+x.p,0).toFixed(2)});
+      localStorage.setItem("rak_history", JSON.stringify(history));
+      cart = []; localStorage.setItem("rak_cart", JSON.stringify(cart));
+      updateCartCount(); renderHistory(); show("profile-page");
+    } else alert("TXID not found. Contact support.");
+  }, 2000);
+}
+function renderHistory() {
+  document.getElementById("history-list").innerHTML = history.length ? history.map(o => `<div style="background:#0a0a0a;padding:20px;border-radius:12px;margin:10px 0">${o.date}<br>${o.items}<br>$${o.total}</div>`).join("") : "No orders yet";
+}
+</script>
+</body>
+</html>
