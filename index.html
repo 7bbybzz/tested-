@@ -8,32 +8,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@600;700&display=swap');
 :root{
   --red:#C41E3A;--black:#0F0F0F;--dark:#1A1A1A;--glow:0 0 15px rgba(196,30,58,0.7);
-  --transition:0.8s cubic-bezier(0.25,0.8,0.25,1);--fast:0.4s ease;
+  --transition:0.8s cubic-bezier(0.25,0.8,0.25,1);--fast:0.4s ease;--slow:1.2s ease;
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body,html{height:100%;overflow:hidden;font-family:'Rajdhani',sans-serif;background:var(--black);color:#fff;}
 #app{position:relative;width:100%;height:100%;perspective:1500px;}
-.page{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;visibility:hidden;transform:scale(0.8);transition:opacity var(--transition),transform var(--transition),visibility var(--transition);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
-.page.active{opacity:1;visibility:visible;transform:scale(1);z-index:10;}
-.container{background:rgba(15,15,15,0.95);border-radius:16px;padding:30px;max-width:420px;width:100%;box-shadow:var(--glow),0 20px 40px rgba(0,0,0,0.6);backdrop-filter:blur(12px);border:1px solid rgba(196,30,58,0.3);}
+.page{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;visibility:hidden;transform:scale(0.95) translateY(30px);transition:opacity var(--transition),transform var(--transition),visibility var(--transition);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;}
+.page.active{opacity:1;visibility:visible;transform:scale(1) translateY(0);z-index:10;}
+.container{background:rgba(15,15,15,0.95);border-radius:16px;padding:30px;max-width:420px;width:100%;box-shadow:var(--glow),0 20px 40px rgba(0,0,0,0.6);backdrop-filter:blur(12px);border:1px solid rgba(196,30,58,0.3);transition:var(--transition);}
 h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:var(--red);text-shadow:0 0 10px var(--red);font-size:2.5rem;letter-spacing:3px;}
 .nav{position:fixed;top:20px;right:20px;z-index:100;display:flex;gap:12px;}
-.icon-btn{background:transparent;border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;}
-.icon{width:28px;height:28px;fill:#aaa;transition:0.3s;}
-.icon-btn:hover .icon{fill:var(--red);transform:scale(1.15);filter:drop-shadow(0 0 8px var(--red));}
+.icon-btn{background:transparent;border:none;cursor:pointer;width:48px;height:48px;display:flex;align-items:center;justify-content:center;transition:var(--fast);}
+.icon{width:28px;height:28px;fill:#aaa;transition:var(--fast);}
+.icon-btn:hover .icon{fill:var(--red);transform:scale(1.2) rotate(15deg);filter:drop-shadow(0 0 8px var(--red));}
 .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:18px;margin:20px 0;max-height:60vh;overflow-y:auto;padding:10px;perspective:1000px;}
-.card-item{background:var(--dark);border-radius:14px;padding:16px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transform-style:preserve-3d;opacity:0;}
+.card-item{background:var(--dark);border-radius:14px;padding:16px;text-align:center;cursor:pointer;position:relative;overflow:hidden;transform-style:preserve-3d;opacity:0;transition:var(--fast);}
 .card-item.enter{animation:dripIn .8s forwards,morph .6s .8s forwards;}
 @keyframes dripIn{0%{transform:translateY(-100%);opacity:0}100%{transform:translateY(0);opacity:1}}
 @keyframes morph{0%{border-radius:50%;transform:scale(0.3)}100%{border-radius:14px;transform:scale(1)}}
-.card-item:hover{transform:translateY(-10px) rotateX(8deg);box-shadow:var(--glow),0 25px 50px rgba(196,30,58,0.3);}
+.card-item:hover{transform:translateY(-10px) rotateX(8deg) scale(1.05);box-shadow:var(--glow),0 25px 50px rgba(196,30,58,0.3);}
 .card-item.sold-out{opacity:0.5;pointer-events:none;}
 .card-item.sold-out::after{content:"SOLD OUT";position:absolute;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--red);font-weight:bold;}
 .price{color:var(--red);font-weight:bold;font-size:1.2rem;text-shadow:0 0 8px var(--red);}
 .btn{background:var(--red);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;transition:var(--fast);width:100%;margin-top:15px;}
-.btn:hover{background:#e63946;transform:translateY(-2px);box-shadow:var(--glow);}
-.btn.disabled{background:#444;cursor:not-allowed;}
-.cart-icon{position:fixed;bottom:20px;right:20px;background:var(--red);width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);cursor:pointer;z-index:99;}
+.btn:hover{background:#e63946;transform:translateY(-3px) scale(1.03);box-shadow:var(--glow);}
+.btn.disabled{background:#444;cursor:not-allowed;transform:none;}
+.cart-icon{position:fixed;bottom:20px;right:20px;background:var(--red);width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);cursor:pointer;z-index:99;transition:var(--fast);}
+.cart-icon:hover{transform:scale(1.1);}
 .cart-count{position:absolute;top:-8px;right:-8px;background:#000;color:var(--red);width:24px;height:24px;border-radius:50%;font-size:0.8rem;display:flex;align-items:center;justify-content:center;}
 .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
 .blood-drip{position:absolute;top:0;width:100%;height:100%;background:linear-gradient(to bottom,transparent 50%,var(--red) 100%);opacity:0.3;animation:drip 3s forwards;}
@@ -43,29 +44,32 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
 .hot-badge{position:absolute;top:8px;right:8px;background:#000;color:#ff0;padding:2px 6px;border-radius:4px;font-size:0.7rem;animation:pulse 1.5s infinite;}
 .hit-badge{position:absolute;top:8px;left:8px;background:#0f0;color:#000;padding:2px 6px;border-radius:4px;font-size:0.7rem;}
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.search-bar{width:100%;padding:12px;background:#222;border:none;border-radius:8px;color:#fff;margin-bottom:15px;}
-.search-bar:focus{outline:none;box-shadow:0 0 8px var(--red);}
-.crypto-btn{background:#222;padding:20px;border-radius:12px;cursor:pointer;transition:0.4s;animation:rotate 4s linear infinite paused;}
-.crypto-btn:hover{box-shadow:var(--glow);transform:scale(1.05);}
-.crypto-btn.active{animation-play-state:running;border:2px solid var(--red);}
+.search-bar{width:100%;padding:12px;background:#222;border:none;border-radius:8px;color:#fff;margin-bottom:15px;transition:var(--fast);}
+.search-bar:focus{outline:none;box-shadow:0 0 12px var(--red);transform:scale(1.02);}
+.crypto-btn{background:#222;padding:20px;border-radius:12px;cursor:pointer;transition:var(--slow);animation:rotate 4s linear infinite paused;}
+.crypto-btn:hover{box-shadow:var(--glow);transform:scale(1.1) rotateY(15deg);}
+.crypto-btn.active{animation-play-state:running;border:2px solid var(--red);box-shadow:var(--glow);}
 @keyframes rotate{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;visibility:hidden;transition:0.4s;}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.95);display:flex;align-items:center;justify-content:center;z-index:999;opacity:0;visibility:hidden;transition:var(--transition);}
 .modal.active{opacity:1;visibility:visible;}
-.input-group{margin:15px 0;}
-.input-group input{width:100%;padding:12px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;}
-.input-group input:focus{outline:none;border-color:var(--red);box-shadow:0 0 8px var(--red);}
-#profile-menu{position:absolute;top:70px;right:20px;background:#111;border:1px solid #333;border-radius:12px;padding:15px;width:220px;display:none;z-index:999;}
-#profile-menu.show{display:block;}
-.tg-logo{position:fixed;top:20px;left:20px;z-index:100;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;}
+.input-group{margin:15px 0;transition:var(--fast);}
+.input-group input{width:100%;padding:12px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;transition:var(--fast);}
+.input-group input:focus{outline:none;border-color:var(--red);box-shadow:0 0 12px var(--red);transform:scale(1.02);}
+#profile-menu{position:absolute;top:70px;right:20px;background:#111;border:1px solid #333;border-radius:12px;padding:15px;width:220px;display:none;z-index:999;transition:var(--fast);}
+#profile-menu.show{display:block;transform:translateY(10px);}
+.tg-logo{position:fixed;top:20px;left:20px;z-index:100;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;transition:var(--fast);}
+.tg-logo:hover{transform:scale(1.1);}
 .tg-logo img{width:50px;height:50px;}
 .tg-logo span{color:#aaa;font-size:0.9rem;margin-top:5px;}
+.header-banner{background:var(--dark);padding:12px;margin:15px 0;border-radius:10px;text-align:center;border:1px solid var(--red);box-shadow:var(--glow);}
+.header-banner h3{color:var(--red);text-shadow:0 0 8px var(--red);}
 @media(max-width:768px){.container{padding:20px;}.card-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
 <div id="loader" class="loader"><div class="blood-drip"></div><h1>RAK</h1><p style="color:#666;margin-top:10px">Accessing vault...</p><div class="scanline"></div></div>
 <!-- TELEGRAM LOGO + VOUCHES TEXT -->
-<a href="https://t.me/addlist/WIPPhibFLBI4MTZh" target="_blank" class="tg-logo">
+<a href="https://t.me/rakTFvouches" target="_blank" class="tg-logo">
   <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/1024px-Telegram_logo.svg.png">
   <span>VOUCHES</span>
 </a>
@@ -89,7 +93,14 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
     <div style="text-align:center;z-index:2;">
       <h1 style="font-size:6rem;background:linear-gradient(90deg,#C41E3A,#ff4d4d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 40px rgba(196,30,58,0.8);">RAK</h1>
       <p style="font-size:1.4rem;color:#666;letter-spacing:8px;margin:20px 0 40px;">ELITE DUMP VAULT</p>
-      <button class="btn" id="enter-shop" style="padding:18px 50px;font-size:1.5rem;letter-spacing:4px;">BREACH VAULT</button>
+      <div class="header-banner">
+        <h3>CC CHECKER COMING SOON!</h3>
+      </div>
+      <div class="header-banner">
+        <h3>ACCESS OTP BOT HERE!</h3>
+        <button class="btn" onclick="window.open('https://t.me/raktfbot', '_blank')" style="margin-top:15px;">GO TO BOT</button>
+      </div>
+      <button class="btn" id="enter-shop" style="padding:18px 50px;font-size:1.5rem;letter-spacing:4px;margin-top:30px;">BREACH VAULT</button>
     </div>
   </section>
   <section id="shop" class="page">
@@ -148,7 +159,7 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
       </div>
       <div style="margin-top:30px;padding-top:20px;border-top:1px solid #444;">
         <h3 style="color:#aaa;margin-bottom:15px;">Redeem Coupon</h3>
-        <input type="text" id="coupon-input" placeholder="Enter coupon code" style="width:100%;padding:12px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;margin-bottom:10px;">
+        <input type="text" id="coupon-input" placeholder="Enter coupon code" class="input-group">
         <button class="btn" onclick="redeemCoupon()">REDEEM</button>
         <p id="coupon-msg" style="margin-top:10px;color:#aaa;font-size:0.9rem;"></p>
       </div>
@@ -185,8 +196,6 @@ const realBins = [
 
 // PREPAID — LOW BALANCES SOLD OUT
 const prepaid = [
-  // {bal:"10-15",price:7}, // SOLD OUT
-  // {bal:"25-50",price:15}, // SOLD OUT
   {bal:"50-100",price:35},
   {bal:"100-150",price:45},
   {bal:"200-300",price:80},
@@ -200,8 +209,22 @@ const COUPON_AMOUNT = 5;
 const state = {page:'home',cart:[],user:null,balance:0};
 const wallets = {BTC:"1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy",ETH:"0x8cBc2AD1dF8c0e42465a9E80c1B84FeB0dEE0D87",LTC:"LhWYtDeDPfUtEpbJC2Pho7xQTXfEEXj6UY"};
 let timerInterval = null;
+let cryptoPrices = {BTC: 89000, ETH: 3117, LTC: 81}; // fallback
 
 setTimeout(()=>document.getElementById('loader').remove(),3000);
+
+async function fetchCryptoPrices() {
+  try {
+    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd');
+    const data = await res.json();
+    cryptoPrices.BTC = data.bitcoin.usd;
+    cryptoPrices.ETH = data.ethereum.usd;
+    cryptoPrices.LTC = data.litecoin.usd;
+  } catch (e) {
+    console.log("Price fetch failed — using fallback");
+  }
+  if (state.page === 'payment') generateInvoice();
+}
 
 function goTo(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -210,10 +233,17 @@ function goTo(id){
   if(id==='shop')renderCards();
   if(id==='cart')renderCart();
   if(id==='topup')updateBalanceDisplay();
+  if(id==='payment')generateInvoice();
 }
 
 function checkLogin(){return localStorage.getItem('rak_user')?JSON.parse(localStorage.getItem('rak_user')):null;}
-function requireLogin(){if(!state.user){document.getElementById('login-modal').classList.add('active');return false;}return true;}
+function requireLogin(){
+  if(!state.user){
+    document.getElementById('login-modal').classList.add('active');
+    return false;
+  }
+  return true;
+}
 
 state.user = checkLogin();
 if(state.user){
@@ -232,7 +262,7 @@ function topUp(amount){
     state.balance += amount;
     localStorage.setItem('rak_balance', state.balance);
     updateBalanceDisplay();
-    alert(`$${amount} added to balance! New balance: $${state.balance.toFixed(2)}`);
+    alert(`$${amount} added! Balance: $${state.balance.toFixed(2)}`);
     confetti();
   }
 }
@@ -249,7 +279,7 @@ function redeemCoupon(){
       localStorage.setItem('rak_balance', state.balance);
       localStorage.setItem('coupon_used', 'true');
       updateBalanceDisplay();
-      msg.textContent = "$5 added from coupon!";
+      msg.textContent = "$5 added!";
       msg.style.color = "#0f0";
       confetti();
     }
@@ -264,16 +294,14 @@ function renderCards(filter='all'){
   if(filter==='PREPAID'){
     prepaid.forEach(p=>{
       const el=document.createElement('div');el.className='card-item enter';
-      if(p.price < 30) el.classList.add('sold-out');
       el.innerHTML=`<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" style="width:60px;">
         <div class="hot-badge">HOT</div><div class="hit-badge">GUARANTEED</div>
         <div>Prepaid $${p.bal}</div><div class="price">$${p.price}</div>`;
-      el.onclick=()=>{if(requireLogin() && p.price >= 30){state.cart.push({name:`Prepaid $${p.bal}`,price:p.price,bin:"PREPAID"});updateCart();confetti();}};
+      el.onclick=()=>{if(requireLogin()){state.cart.push({name:`Prepaid $${p.bal}`,price:p.price,bin:"PREPAID"});updateCart();confetti();}};
       grid.appendChild(el);
     });
     return;
   }
-  // ALL BIN cards (same as before)
   for(let i=0;i<300;i++){
     const bin = realBins[Math.floor(Math.random()*realBins.length)];
     const price = (Math.random()*25 + 5).toFixed(2);
@@ -301,13 +329,35 @@ function updateCart(){
   const checkoutBtn = document.getElementById('checkout-btn');
   if(total >= 20){
     checkoutBtn.classList.remove('disabled');
-    checkoutBtn.onclick = () => {if(requireLogin() && state.cart.length)goTo('payment');generateInvoice();};
+    checkoutBtn.onclick = () => {goTo('payment');};
   } else {
     checkoutBtn.classList.add('disabled');
     checkoutBtn.onclick = null;
   }
   const badge=document.getElementById('cart-count');
   badge.textContent=state.cart.length;badge.style.display=state.cart.length?'flex':'none';
+}
+
+async function generateInvoice(){
+  await fetchCryptoPrices();
+  const total = state.cart.reduce((a,c)=>a+c.price,0);
+  const selected = document.querySelector('.crypto-btn.active').dataset.crypto;
+  const amount = (total / cryptoPrices[selected]).toFixed(8);
+  document.getElementById('crypto-amount').textContent = amount;
+  document.getElementById('crypto-type').textContent = selected;
+  document.getElementById('wallet-addr').textContent = wallets[selected];
+  QRCode.toCanvas(document.getElementById('qr-canvas'), selected + ':' + wallets[selected] + '?amount=' + amount, {width:200});
+  document.getElementById('copy-wallet').onclick = () => {
+    navigator.clipboard.writeText(wallets[selected]);
+    alert('Address copied!');
+  };
+  if(timerInterval) clearInterval(timerInterval);
+  let time=1800;
+  timerInterval=setInterval(()=>{
+    time--;
+    document.getElementById('timer').textContent=Math.floor(time/60)+':'+('0'+time%60).slice(-2);
+    if(time<=0) clearInterval(timerInterval);
+  },1000);
 }
 
 // Events
@@ -317,6 +367,16 @@ document.getElementById('cart-icon').onclick=()=>goTo('cart');
 document.getElementById('profile-btn').onclick=()=>{document.getElementById('profile-menu').classList.toggle('show');};
 document.getElementById('balance-btn').onclick=()=>goTo('topup');
 document.getElementById('orders-btn').onclick=()=>goTo('orders');
+document.getElementById('checkout-btn').onclick = () => {if(requireLogin() && state.cart.length)goTo('payment');};
+
+// Crypto selection
+let selectedCrypto = 'BTC';
+document.querySelectorAll('.crypto-btn').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.crypto-btn').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active');
+  selectedCrypto = b.dataset.crypto;
+  generateInvoice();
+});
 
 // Login
 document.getElementById('switch-auth').onclick=(e)=>{e.preventDefault();const t=document.getElementById('modal-title');t.textContent=t.textContent==='Sign In'?'Sign Up':'Sign In';document.getElementById('auth-btn').textContent=t.textContent.includes('Up')?'SIGN UP':'SIGN IN';};
@@ -325,13 +385,15 @@ document.getElementById('auth-btn').onclick=()=>{
   localStorage.setItem('rak_user',JSON.stringify(user)); state.user=user;
   document.getElementById('user-display').textContent=user.username;
   document.getElementById('login-modal').classList.remove('active');
-  alert('Successful! You can go ahead and shop!');
+  alert('Logged in! You can now shop.');
+  updateBalanceDisplay();
 };
 document.getElementById('logout-btn').onclick=()=>{localStorage.clear();location.reload();};
 
 document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderCards(b.dataset.cat);});
 
 goTo('home');
+fetchCryptoPrices(); // initial load
 </script>
 </body>
 </html>
