@@ -27,9 +27,12 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
 @keyframes dripIn{0%{transform:translateY(-100%);opacity:0}100%{transform:translateY(0);opacity:1}}
 @keyframes morph{0%{border-radius:50%;transform:scale(0.3)}100%{border-radius:14px;transform:scale(1)}}
 .card-item:hover{transform:translateY(-10px) rotateX(8deg);box-shadow:var(--glow),0 25px 50px rgba(196,30,58,0.3);}
+.card-item.sold-out{opacity:0.5;pointer-events:none;}
+.card-item.sold-out::after{content:"SOLD OUT";position:absolute;inset:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:var(--red);font-weight:bold;}
 .price{color:var(--red);font-weight:bold;font-size:1.2rem;text-shadow:0 0 8px var(--red);}
 .btn{background:var(--red);color:#fff;border:none;padding:12px 24px;border-radius:8px;font-weight:bold;cursor:pointer;transition:var(--fast);width:100%;margin-top:15px;}
 .btn:hover{background:#e63946;transform:translateY(-2px);box-shadow:var(--glow);}
+.btn.disabled{background:#444;cursor:not-allowed;}
 .cart-icon{position:fixed;bottom:20px;right:20px;background:var(--red);width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:var(--glow);cursor:pointer;z-index:99;}
 .cart-count{position:absolute;top:-8px;right:-8px;background:#000;color:var(--red);width:24px;height:24px;border-radius:50%;font-size:0.8rem;display:flex;align-items:center;justify-content:center;}
 .loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--black);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;}
@@ -53,32 +56,31 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
 .input-group input:focus{outline:none;border-color:var(--red);box-shadow:0 0 8px var(--red);}
 #profile-menu{position:absolute;top:70px;right:20px;background:#111;border:1px solid #333;border-radius:12px;padding:15px;width:220px;display:none;z-index:999;}
 #profile-menu.show{display:block;}
-.tg-logo{position:fixed;top:20px;left:20px;z-index:100;cursor:pointer;}
+.tg-logo{position:fixed;top:20px;left:20px;z-index:100;display:flex;flex-direction:column;align-items:center;cursor:pointer;text-decoration:none;}
+.tg-logo img{width:50px;height:50px;}
+.tg-logo span{color:#aaa;font-size:0.9rem;margin-top:5px;}
 @media(max-width:768px){.container{padding:20px;}.card-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
 </head>
 <body>
 <div id="loader" class="loader"><div class="blood-drip"></div><h1>RAK</h1><p style="color:#666;margin-top:10px">Accessing vault...</p><div class="scanline"></div></div>
-
-<!-- TELEGRAM LOGO TOP LEFT -->
-<a href="https://t.me/addlist/WIPPhibFLBI4MTZh" target="_blank">
-  <img class="tg-logo" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJ3aGl0ZSI+PHBhdGggZD0iTTEyIDIyYy01LjUyMyAwLTEwLTQuNDc3LTEwLTEwczQuNDc3LTEwIDEwLTEwIDEwIDQuNDc3IDEwIDEwLTEuMzI2IDAtMi41LTEuMTk0LTMuNDY5LTMuMDIzbC0uMDMxLS4wMDlsLTMuMjUtMS4yNWExLjUgMS41IDAgMCAxLS45MDYtMS4yNWwtLjAwMS0uMDAxYy0uMzM2LS4xMzYtLjYxOS0uMzM2LS44MzktLjYxOWwtLjAwMS0uMDAxYy0uMjItLjI4My0uMzY4LS42MzYtLjM2OC0uOTk5IDAtLjcyMy41NzYtMS4zMDYgMS4yOTktMS4zMDZoLjAwMWwxLjI1LTMuMjVjLjE2Ni0uNDM2LjYyLS42NjYuOTk5LS41MDNsLjAwMS4wMDFoNC41YzEuMDU3IDAgMS43NS42OTYgMS43NSAxLjI1IDAgLjU1NC0uNjk2IDEuMjUtMS43NSAxLjI1aC0uMDAxbC0zLjI1IDEuMjVjLS40MzYuMTY2LS42NjYuNjItLjUwNi45OTlsLjAwMS4wMDFoNC41YzEuMDU3IDAgMS43NS42OTYgMS43NSAxLjI1IDAgLjU1NC0uNjk2IDEuMjUtMS43NSAxLjI1aC0uMDAxbC0zLjI1IDEuMjVjLS40MzYuMTY2LS42NjYuNjItLjUwNi45OTlsLjAwMS4wMDFoNC41YzEuMDU3IDAgMS43NS42OTYgMS43NSAxLjI1IDAgLjU1NC0uNjk2IDEuMjUtMS43NSAxLjI1aC0uMDAxbC0zLjI1IDEuMjVjLS40MzYuMTY2LS42NjYuNjItLjUwNi45OTlsLjAwMS4wMDFoNC41YzEuMDU3IDAgMS43NS42OTYgMS43NSAxLjI1IDAgLjU1NC0uNjk2IDEuMjUtMS43NSAxLjI1aC0uMDAxbC0zLjI1IDEuMjVjLS40MzYuMTY2LS42NjYuNjItLjUwNi45OTlsLjAwMS4wMDFoNC41YzEuMDU3IDAgMS43NS42OTYgMS43NSAxLjI1IDAgLjU1NC0uNjk2IDEuMjUtMS43NSAxLjI1aC0uMDAxeiIvPjwvc3ZnPg==" width="42">
+<!-- TELEGRAM LOGO + VOUCHES TEXT -->
+<a href="https://t.me/addlist/WIPPhibFLBI4MTZh" target="_blank" class="tg-logo">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/1024px-Telegram_logo.svg.png">
+  <span>VOUCHES</span>
 </a>
-
 <div id="app">
   <div class="nav">
     <button id="home-btn" class="icon-btn"><svg viewBox="0 0 24 24" class="icon"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></button>
     <button id="profile-btn" class="icon-btn"><svg viewBox="0 0 24 24" class="icon"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></button>
   </div>
-
   <!-- PROFILE MENU -->
   <div id="profile-menu">
-    <div style="text-align:center;margin-bottom:15px;"><strong id="user-display">Guest</strong></div>
+    <div style="text-align:center;margin-bottom:15px;"><strong id="user-display">Guest</strong><br><small>Balance: $<span id="user-balance">0.00</span></small></div>
     <button class="btn" id="balance-btn" style="margin:8px 0;">Top Up Balance</button>
     <button class="btn" id="orders-btn" style="margin:8px 0;background:#333;">My Orders</button>
     <button class="btn" id="logout-btn" style="background:#600;">Logout</button>
   </div>
-
   <section id="home" class="page active">
     <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none;">
       <div class="blood-drip" style="animation-delay:0.5s;"></div>
@@ -90,7 +92,6 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
       <button class="btn" id="enter-shop" style="padding:18px 50px;font-size:1.5rem;letter-spacing:4px;">BREACH VAULT</button>
     </div>
   </section>
-
   <section id="shop" class="page">
     <div class="container" style="max-width:900px">
       <h2>Inventory</h2>
@@ -106,7 +107,6 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
       <div id="card-grid" class="card-grid"></div>
     </div>
   </section>
-
   <section id="cart" class="page">
     <div class="container">
       <h2>Cart</h2><div id="cart-items"></div>
@@ -114,11 +114,11 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
         <div style="display:flex;justify-content:space-between;font-weight:bold;font-size:1.2rem">
           <span>TOTAL:</span><span id="cart-total">$0.00</span>
         </div>
-        <button class="btn" id="checkout-btn">CHECKOUT</button>
+        <p style="color:#aaa;text-align:center;margin:10px 0;">Minimum order: $20</p>
+        <button class="btn disabled" id="checkout-btn">CHECKOUT</button>
       </div>
     </div>
   </section>
-
   <section id="payment" class="page">
     <div class="container">
       <h2>Select Payment</h2>
@@ -136,21 +136,32 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
       </div>
     </div>
   </section>
-
-  <!-- TOP UP & ORDERS PAGES -->
+  <!-- TOP UP BALANCE PAGE -->
   <section id="topup" class="page">
-    <div class="container"><h2>Top Up Balance</h2><p style="text-align:center;color:#aaa;margin:30px 0;">Coming soon — manual top-ups via Telegram</p></div>
+    <div class="container">
+      <h2>Top Up Balance</h2>
+      <p style="text-align:center;color:#aaa;margin-bottom:30px;">Current Balance: $<span id="current-balance">0.00</span></p>
+      <div style="display:grid;grid-template-columns:1fr;gap:15px;">
+        <button class="btn" onclick="topUp(25)">Top Up $25</button>
+        <button class="btn" onclick="topUp(50)">Top Up $50</button>
+        <button class="btn" onclick="topUp(100)">Top Up $100</button>
+      </div>
+      <div style="margin-top:30px;padding-top:20px;border-top:1px solid #444;">
+        <h3 style="color:#aaa;margin-bottom:15px;">Redeem Coupon</h3>
+        <input type="text" id="coupon-input" placeholder="Enter coupon code" style="width:100%;padding:12px;background:#222;border:1px solid #444;border-radius:8px;color:#fff;margin-bottom:10px;">
+        <button class="btn" onclick="redeemCoupon()">REDEEM</button>
+        <p id="coupon-msg" style="margin-top:10px;color:#aaa;font-size:0.9rem;"></p>
+      </div>
+    </div>
   </section>
   <section id="orders" class="page">
     <div class="container"><h2>My Orders</h2><p style="text-align:center;color:#aaa;margin:30px 0;">No orders yet...</p></div>
   </section>
-
   <div class="cart-icon" id="cart-icon">
     <svg viewBox="0 0 24 24" style="width:32px;height:32px;fill:#fff"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59L5.25 12c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42l.02-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 20.75 5H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
     <div class="cart-count" id="cart-count" style="display:none">0</div>
   </div>
 </div>
-
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="modal">
   <div class="container" style="max-width:380px;">
@@ -162,24 +173,32 @@ h1{font-family:'Orbitron',sans-serif;text-align:center;margin-bottom:20px;color:
     <p style="text-align:center;margin-top:15px;"><a href="#" id="switch-auth" style="color:#aaa;">Create account</a></p>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <script>
-// REAL BINS YOU GAVE ME + some extras
+// REAL BINS
 const realBins = [
   "402018","517705","401994","41740","420767","424132","442755","446613","537100","442732",
   "461046","478200","483316","483314","490070","5130850","580365","460531","420640","462228",
-  "426750","514812","412610","424631","533224","517805","441103","468005","486796","426684",
-  "405206","407791","407166","406068","405731","412425","455621","492942","414709","414720","518675"
+  "426750","514812","412610","424631","533224","517805","441103","468005","486796","426684"
 ];
 
-const state = {page:'home',cart:[],user:null};
-const wallets = {BTC:"1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy",ETH:"0x8cBc2AD1dF8c0e42465a9E80c1B84FeB0dEE0D87",LTC:"LhWYtDeDPfUtEpbJC2Pho7xQTXfEEXj6UY"};
+// PREPAID — LOW BALANCES SOLD OUT
 const prepaid = [
-  {bal:"10-15",price:7},{bal:"25-50",price:15},{bal:"50-100",price:35},{bal:"100-150",price:45},
-  {bal:"200-300",price:80},{bal:"400-600",price:150},{bal:"800-1000",price:280}
+  // {bal:"10-15",price:7}, // SOLD OUT
+  // {bal:"25-50",price:15}, // SOLD OUT
+  {bal:"50-100",price:35},
+  {bal:"100-150",price:45},
+  {bal:"200-300",price:80},
+  {bal:"400-600",price:150},
+  {bal:"800-1000",price:280}
 ];
+
+const COUPON_CODE = "RAK-TF76F30CWSH";
+const COUPON_AMOUNT = 5;
+
+const state = {page:'home',cart:[],user:null,balance:0};
+const wallets = {BTC:"1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy",ETH:"0x8cBc2AD1dF8c0e42465a9E80c1B84FeB0dEE0D87",LTC:"LhWYtDeDPfUtEpbJC2Pho7xQTXfEEXj6UY"};
 let timerInterval = null;
 
 setTimeout(()=>document.getElementById('loader').remove(),3000);
@@ -190,29 +209,71 @@ function goTo(id){
   state.page=id;
   if(id==='shop')renderCards();
   if(id==='cart')renderCart();
+  if(id==='topup')updateBalanceDisplay();
 }
+
 function checkLogin(){return localStorage.getItem('rak_user')?JSON.parse(localStorage.getItem('rak_user')):null;}
 function requireLogin(){if(!state.user){document.getElementById('login-modal').classList.add('active');return false;}return true;}
+
 state.user = checkLogin();
-if(state.user)document.getElementById('user-display').textContent = state.user.username;
+if(state.user){
+  document.getElementById('user-display').textContent = state.user.username;
+  state.balance = parseFloat(localStorage.getItem('rak_balance') || 0);
+  updateBalanceDisplay();
+}
+
+function updateBalanceDisplay(){
+  document.getElementById('user-balance').textContent = state.balance.toFixed(2);
+  document.getElementById('current-balance').textContent = state.balance.toFixed(2);
+}
+
+function topUp(amount){
+  if(requireLogin()){
+    state.balance += amount;
+    localStorage.setItem('rak_balance', state.balance);
+    updateBalanceDisplay();
+    alert(`$${amount} added to balance! New balance: $${state.balance.toFixed(2)}`);
+    confetti();
+  }
+}
+
+function redeemCoupon(){
+  const input = document.getElementById('coupon-input').value.trim();
+  const msg = document.getElementById('coupon-msg');
+  if(input === COUPON_CODE){
+    if(localStorage.getItem('coupon_used') === 'true'){
+      msg.textContent = "Coupon already used!";
+      msg.style.color = "#f66";
+    } else {
+      state.balance += COUPON_AMOUNT;
+      localStorage.setItem('rak_balance', state.balance);
+      localStorage.setItem('coupon_used', 'true');
+      updateBalanceDisplay();
+      msg.textContent = "$5 added from coupon!";
+      msg.style.color = "#0f0";
+      confetti();
+    }
+  } else {
+    msg.textContent = "Invalid coupon";
+    msg.style.color = "#f66";
+  }
+}
 
 function renderCards(filter='all'){
   const grid=document.getElementById('card-grid');grid.innerHTML='';
   if(filter==='PREPAID'){
     prepaid.forEach(p=>{
       const el=document.createElement('div');el.className='card-item enter';
+      if(p.price < 30) el.classList.add('sold-out');
       el.innerHTML=`<img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" style="width:60px;">
         <div class="hot-badge">HOT</div><div class="hit-badge">GUARANTEED</div>
         <div>Prepaid $${p.bal}</div><div class="price">$${p.price}</div>`;
-      el.onclick=()=>{if(requireLogin()){state.cart.push({name:`Prepaid $${p.bal}`,price:p.price,bin:"PREPAID"});updateCart();confetti();}};
+      el.onclick=()=>{if(requireLogin() && p.price >= 30){state.cart.push({name:`Prepaid $${p.bal}`,price:p.price,bin:"PREPAID"});updateCart();confetti();}};
       grid.appendChild(el);
     });
     return;
   }
-  if(filter==='EU'||filter==='UK'||filter==='CA'||filter==='AU'){
-    grid.innerHTML='<p style="grid-column:1/-1;text-align:center;color:#aaa;padding:50px;">Coming back soon!</p>';
-    return;
-  }
+  // ALL BIN cards (same as before)
   for(let i=0;i<300;i++){
     const bin = realBins[Math.floor(Math.random()*realBins.length)];
     const price = (Math.random()*25 + 5).toFixed(2);
@@ -237,6 +298,14 @@ function updateCart(){
     items.appendChild(div);
   });
   document.getElementById('cart-total').textContent='$'+total.toFixed(2);
+  const checkoutBtn = document.getElementById('checkout-btn');
+  if(total >= 20){
+    checkoutBtn.classList.remove('disabled');
+    checkoutBtn.onclick = () => {if(requireLogin() && state.cart.length)goTo('payment');generateInvoice();};
+  } else {
+    checkoutBtn.classList.add('disabled');
+    checkoutBtn.onclick = null;
+  }
   const badge=document.getElementById('cart-count');
   badge.textContent=state.cart.length;badge.style.display=state.cart.length?'flex':'none';
 }
@@ -246,29 +315,8 @@ document.getElementById('enter-shop').onclick=()=>goTo('shop');
 document.getElementById('home-btn').onclick=()=>goTo('home');
 document.getElementById('cart-icon').onclick=()=>goTo('cart');
 document.getElementById('profile-btn').onclick=()=>{document.getElementById('profile-menu').classList.toggle('show');};
-document.getElementById('checkout-btn').onclick=()=>{if(requireLogin() && state.cart.length)goTo('payment');generateInvoice();};
 document.getElementById('balance-btn').onclick=()=>goTo('topup');
 document.getElementById('orders-btn').onclick=()=>goTo('orders');
-
-// Crypto
-let selectedCrypto = 'BTC';
-document.querySelectorAll('.crypto-btn').forEach(b=>b.onclick=()=>{
-  document.querySelectorAll('.crypto-btn').forEach(x=>x.classList.remove('active'));
-  b.classList.add('active'); selectedCrypto=b.dataset.crypto; generateInvoice();
-});
-async function generateInvoice(){
-  const total=state.cart.reduce((a,c)=>a+c.price,0);
-  const rate=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd`).then(r=>r.json());
-  const prices={BTC:rate.bitcoin.usd,ETH:rate.ethereum.usd,LTC:rate.litecoin.usd};
-  const amount=(total/prices[selectedCrypto]).toFixed(8);
-  document.getElementById('crypto-amount').textContent=amount;
-  document.getElementById('crypto-type').textContent=selectedCrypto;
-  document.getElementById('wallet-addr').textContent=wallets[selectedCrypto];
-  QRCode.toCanvas(document.getElementById('qr-canvas'), selectedCrypto+':'+wallets[selectedCrypto]+'?amount='+amount,{width:200});
-  document.getElementById('copy-wallet').onclick=()=>{navigator.clipboard.writeText(wallets[selectedCrypto]);alert('Copied!');};
-  if(timerInterval)clearInterval(timerInterval);
-  let time=1800; timerInterval=setInterval(()=>{time--;document.getElementById('timer').textContent=Math.floor(time/60)+':'+('0'+time%60).slice(-2);if(time<=0)clearInterval(timerInterval);},1000);
-}
 
 // Login
 document.getElementById('switch-auth').onclick=(e)=>{e.preventDefault();const t=document.getElementById('modal-title');t.textContent=t.textContent==='Sign In'?'Sign Up':'Sign In';document.getElementById('auth-btn').textContent=t.textContent.includes('Up')?'SIGN UP':'SIGN IN';};
@@ -279,12 +327,11 @@ document.getElementById('auth-btn').onclick=()=>{
   document.getElementById('login-modal').classList.remove('active');
   alert('Successful! You can go ahead and shop!');
 };
-document.getElementById('logout-btn').onclick=()=>{localStorage.removeItem('rak_user');state.user=null;location.reload();};
+document.getElementById('logout-btn').onclick=()=>{localStorage.clear();location.reload();};
 
 document.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-cat]').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderCards(b.dataset.cat);});
 
 goTo('home');
-generateInvoice(); // pre-load for payment page
 </script>
 </body>
 </html>
