@@ -3,214 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>rak.tf | under construction</title>
-    <link href="https://fonts.googleapis.com/css2?family=Road+Rage&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
+    <title>rak.tf</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            background: #000;
-            color: #ff0044;
-            min-height: 100vh;
-            overflow-x: hidden;
-            font-family: 'Orbitron', sans-serif;
-            background-image: radial-gradient(circle at 10% 20%, rgba(255,0,68,0.15) 0%, transparent 20%),
-                              radial-gradient(circle at 90% 80%, rgba(255,0,68,0.1) 0%, transparent 20%);
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            transition: all 0.5s ease;
         }
-        canvas { position: fixed; top: 0; left: 0; z-index: 1; }
-        
         .container {
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
+            width: 90%;
+            margin: auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 2em;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            animation: fadeIn 1s ease-in;
+        }
+        .login-register {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
-            text-align: center;
+            height: 100vh;
+        }
+        .form-container {
+            background: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .main-content {
+            display: none;
             opacity: 0;
-            animation: fadeIn 2s ease-out forwards;
+            transition: opacity 1s ease-in;
+        }
+        .main-content.show {
+            display: block;
+            opacity: 1;
+        }
+        .column {
+            background: #444;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+        }
+        .column h2 {
+            color: #ff0000;
+        }
+        .cart {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            background: #ff0000;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .cart-item {
+            margin: 5px 0;
+        }
+        .telegram-icon {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 30px;
+            height: 30px;
+            background: url('https://telegram.org/img/t_logo.png') no-repeat;
+            background-size: cover;
+            cursor: pointer;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
         }
         @keyframes fadeIn {
+            from { opacity: 0; }
             to { opacity: 1; }
-        }
-
-        .tg-logo {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            width: 70px;
-            z-index: 100;
-            cursor: pointer;
-            filter: drop-shadow(0 0 15px #ff0044);
-            animation: pulse 3s infinite;
-            transition: all 0.3s;
-        }
-        .tg-logo:hover {
-            transform: scale(1.2) rotate(5deg);
-            filter: drop-shadow(0 0 30px #ff0044);
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
-
-        h1 {
-            font-family: 'Road Rage', cursive;
-            font-size: 10vw;
-            background: linear-gradient(90deg, #ff0044, #fff, #ff0044);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(255,0,68,0.5);
-            margin-bottom: 20px;
-            animation: glitch 4s infinite;
-        }
-        @keyframes glitch {
-            0%, 100% { text-shadow: 0 0 40px rgba(255,0,68,0.5); }
-            2% { text-shadow: -5px 0 0 #ff0044, 5px 0 0 cyan; }
-            4% { text-shadow: 5px 0 0 #ff0044, -5px 0 0 cyan; }
-        }
-
-        .status {
-            font-size: 2rem;
-            margin: 20px 0;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .info {
-            max-width: 800px;
-            font-size: 1.5rem;
-            line-height: 2;
-            margin: 40px auto;
-            padding: 30px;
-            background: rgba(255,0,68,0.05);
-            border: 1px solid rgba(255,0,68,0.3);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s;
-        }
-        .info:hover {
-            border-color: #ff0044;
-            box-shadow: 0 0 30px rgba(255,0,68,0.4);
-            transform: translateY(-10px);
-        }
-
-        a {
-            color: #ff0044;
-            text-decoration: none;
-            position: relative;
-            font-weight: bold;
-        }
-        a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background: #ff0044;
-            transition: width 0.4s;
-        }
-        a:hover::after {
-            width: 100%;
-        }
-
-        .rak-available {
-            margin-top: 50px;
-            padding: 25px;
-            background: linear-gradient(45deg, rgba(255,0,68,0.2), transparent);
-            border: 2px dashed #ff0044;
-            border-radius: 20px;
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
         }
     </style>
 </head>
 <body>
-
-<canvas id="particles"></canvas>
-
-<a href="https://t.me/addlist/WIPPhibFLBI4MTZh" target="_blank">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" class="tg-logo" alt="Telegram Group">
-</a>
-
-<div class="container">
-    <h1>RAK.TF</h1>
-    <div class="status">▂▃▅▆▇ UNDER MAINTENANCE ▇▆▅▃▂</div>
-
-    <div class="info">
-        <p>however rak is available for purchases — <strong>serious inquiries only</strong></p>
-        <p>be patient for updates or text <a href="https://t.me/rakrunnin" target="_blank">@rakrunnin</a> on telegram</p>
+    <div class="container">
+        <img src="https://ibb.co/KzhVm7vX" alt="rak.tf Logo" class="logo">
+        <div class="header">NEW B4U SERVICE!</div>
+        <div class="login-register">
+            <div class="form-container">
+                <h2>Login</h2>
+                <input type="email" id="loginEmail" placeholder="Email">
+                <input type="password" id="loginPassword" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <h2>Register</h2>
+                <input type="email" id="registerEmail" placeholder="Email">
+                <input type="password" id="registerPassword" placeholder="Password">
+                <input type="password" id="confirmPassword" placeholder="Confirm Password">
+                <button onclick="register()">Register</button>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="column">
+                <h2>CCS</h2>
+                <p onclick="showMessage()">Click for Info</p>
+            </div>
+            <div class="column">
+                <h2>Prepaids</h2>
+                <div>
+                    <p><img src="https://www.visa.com.ec/dam/VCOM/regional/lac/EC/visa-blue-22px.png" alt="Visa Logo"> $25 Random Balance Prepaid</p>
+                    <button onclick="addToCart('Visa Prepaid')">Add to Cart</button>
+                </div>
+                <div>
+                    <p><img src="https://www.mastercard.com.br/etc/designs/mastercard-global/mastercom-logo.svg" alt="Mastercard Logo"> $25 Random Balance Prepaid</p>
+                    <button onclick="addToCart('Mastercard Prepaid')">Add to Cart</button>
+                </div>
+            </div>
+            <div class="column">
+                <h2>B4U Service</h2>
+                <p>Get food, electronics, and rides for 70% off!</p>
+            </div>
+        </div>
+        <div class="cart" id="cart">
+            <h3>Cart</h3>
+        </div>
+        <div class="telegram-icon" onclick="window.location.href='https://t.me/addlist/VGpZhvAy668yNThh';"></div>
     </div>
 
-    <div class="rak-available">
-        <h2>RAK IS STILL LIVE FOR DEALS</h2>
-        <p>DM if you're real. No time wasters.</p>
-    </div>
-</div>
-
-<script>
-    // Simple floating particles background
-    const canvas = document.getElementById('particles');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const particlesArray = [];
-    const numberOfParticles = 80;
-
-    class Particle {
-        constructor(){
-            this.x = Math.random() * canvas.width;
-            this.y = Math.random() * canvas.height;
-            this.size = Math.random() * 5 + 1;
-            this.speedX = Math.random() * 1 - 0.5;
-            this.speedY = Math.random() * 1 - 0.5;
-        }
-        update(){
-            this.x += this.speedX;
-            this.y += this.speedY;
-            if (this.size > 0.2) this.size -= 0.01;
-        }
-        draw(){
-            ctx.fillStyle = 'rgba(255,0,68,0.4)';
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-            ctx.fill();
-        }
-    }
-
-    function init(){
-        for(let i = 0; i < numberOfParticles; i++){
-            particlesArray.push(new Particle());
-        }
-    }
-    init();
-
-    function animate(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for(let i = 0; i < particlesArray.length; i++){
-            particlesArray[i].update();
-            particlesArray[i].draw();
-            if(particlesArray[i].size <= 0.3){
-                particlesArray.splice(i, 1);
-                i--;
-                particlesArray.push(new Particle());
+    <script>
+        function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            if (localStorage.getItem(email) === password) {
+                document.querySelector('.login-register').style.display = 'none';
+                document.querySelector('.main-content').classList.add('show');
+            } else {
+                alert('Invalid credentials');
             }
         }
-        requestAnimationFrame(animate);
-    }
-    animate();
 
-    window.addEventListener('resize', () => {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    });
-</script>
+        function register() {
+            const email = document.getElementById('registerEmail').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            if (password === confirmPassword) {
+                localStorage.setItem(email, password);
+                alert('Registration successful. Please login.');
+            } else {
+                alert('Passwords do not match');
+            }
+        }
+
+        function showMessage() {
+            alert('Restock is on the way! CCS and bin search will be back up soon. Until then, check out our other columns!');
+        }
+
+        let cart = [];
+        function addToCart(item) {
+            if (cart.length < 5) {
+                cart.push(item);
+                updateCart();
+            } else {
+                alert('Cart limit reached!');
+            }
+        }
+
+        function updateCart() {
+            const cartDiv = document.getElementById('cart');
+            cartDiv.innerHTML = '<h3>Cart</h3>';
+            cart.forEach(item => {
+                cartDiv.innerHTML += `<div class="cart-item">${item}</div>`;
+            });
+        }
+    </script>
 </body>
 </html>
