@@ -47,128 +47,39 @@ body, html {
 #app.visible {
   opacity: 1;
 }
-.tg-logo {
+.auth-page {
   position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 100;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--black);
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  text-decoration: none;
-  transition: 0.4s;
-}
-.tg-logo:hover {
-  transform: scale(1.1);
-}
-.tg-logo img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-.columns {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 25px;
   justify-content: center;
-  padding: 40px;
-  max-width: 1400px;
-  margin: 0 auto;
+  align-items: center;
+  z-index: 10000;
+  transition: opacity 0.5s;
 }
-.column-card {
+.auth-page.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.auth-container {
   background: rgba(15,15,15,0.95);
   border-radius: 16px;
-  padding: 25px;
-  width: 320px;
+  padding: 40px;
+  width: 350px;
   box-shadow: var(--glow);
   border: 1px solid rgba(196,30,58,0.3);
   backdrop-filter: blur(12px);
-  cursor: pointer;
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all var(--transition);
+  text-align: center;
 }
-.column-card.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.column-card h2 {
+.auth-container h2 {
   font-family: 'Orbitron', sans-serif;
   color: var(--red);
   text-shadow: 0 0 10px var(--red);
-  text-align: center;
   font-size: 2.2rem;
-}
-.column-card p {
-  text-align: center;
-  color: #aaa;
-}
-.page-content {
-  display: none;
-  padding: 40px;
-  text-align: center;
-}
-.page-content.active {
-  display: block;
-  animation: fadeIn 0.8s forwards;
-}
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95) translateY(20px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.b4u-hero {
-  background: linear-gradient(135deg, rgba(196,30,58,0.4), rgba(0,0,0,0.8));
-  padding: 50px;
-  border-radius: 18px;
-  margin: 30px auto;
-  max-width: 1000px;
-  box-shadow: var(--glow);
-  animation: pulse 4s infinite alternate;
-}
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 25px rgba(196,30,58,0.7); }
-  50% { box-shadow: 0 0 60px rgba(196,30,58,1); }
-}
-.b4u-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-  margin-top: 40px;
-}
-.b4u-item {
-  background: var(--dark);
-  border-radius: 14px;
-  padding: 25px;
-  text-align: center;
-  transition: 0.5s;
-  opacity: 0;
-  transform: scale(0.9);
-}
-.b4u-item.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-.b4u-item:hover {
-  transform: scale(1.05);
-  box-shadow: var(--glow);
-}
-.b4u-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 12px;
-  animation: bubbleEffect 1s ease-in-out forwards;
-}
-@keyframes bubbleEffect {
-  0% { transform: scale(0.8); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-.auth-section {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin: 20px 0;
+  margin-bottom: 20px;
 }
 .auth-button {
   padding: 10px 20px;
@@ -178,71 +89,39 @@ body, html {
   border-radius: 5px;
   cursor: pointer;
   transition: var(--transition);
+  margin: 10px;
 }
 .auth-button:hover {
   transform: scale(1.1);
   box-shadow: var(--glow);
 }
-.order-page {
-  display: none;
-  background: linear-gradient(135deg, rgba(196,30,58,0.2), rgba(0,0,0,0.8));
-  padding: 50px;
-  border-radius: 18px;
-  margin: 30px auto;
-  max-width: 800px;
-  box-shadow: var(--glow);
-  animation: fadeIn 0.8s forwards;
-}
-.order-page.active {
-  display: block;
-}
-.order-page h2 {
-  font-size: 2.5rem;
-  margin-bottom: 20px;
-}
-.order-page p {
-  font-size: 1.6rem;
-  margin-bottom: 30px;
-}
-.store-options {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-}
-.store-option {
+.auth-input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid var(--red);
+  border-radius: 5px;
   background: var(--dark);
-  padding: 20px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: var(--transition);
-  opacity: 0;
-  transform: translateY(20px);
+  color: white;
 }
-.store-option.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.store-option:hover {
-  transform: scale(1.05);
-  box-shadow: var(--glow);
-}
-.glow-button {
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   background: var(--red);
   color: white;
-  padding: 15px 30px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: var(--transition);
-  animation: glow 1s infinite alternate;
+  padding: 20px;
+  border-radius: 10px;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-@keyframes glow {
-  0% { box-shadow: 0 0 10px var(--red); }
-  100% { box-shadow: 0 0 20px var(--red); }
-}
-.glow-button:hover {
-  transform: scale(1.1);
+.popup.visible {
+  opacity: 1;
 }
 .bubble {
   position: absolute;
@@ -258,6 +137,49 @@ body, html {
   50% { transform: translateY(-20px) scale(1.2); }
   100% { transform: translateY(0) scale(1); }
 }
+.checkout-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(196,30,58,0.4), rgba(0,0,0,0.8));
+  color: var(--red);
+  font-size: 2rem;
+  font-weight: bold;
+  animation: glow 2s infinite alternate;
+}
+@keyframes glow {
+  0% { text-shadow: 0 0 10px var(--red); }
+  100% { text-shadow: 0 0 20px var(--red); }
+}
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--black);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9998;
+  opacity: 1;
+  transition: opacity 1s;
+}
+.loading-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.loader {
+  border: 16px solid var(--dark);
+  border-top: 16px solid var(--red);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -265,6 +187,18 @@ body, html {
   <h1 style="color: var(--red); font-family: 'Orbitron', sans-serif; font-size: 6rem;">RAK.TF</h1>
 </div>
 <div id="app">
+  <div class="auth-page" id="authPage">
+    <div class="auth-container">
+      <h2>RAK.TF</h2>
+      <button class="auth-button" onclick="showLogin()">Login</button>
+      <button class="auth-button" onclick="showRegister()">Register</button>
+      <button class="auth-button" onclick="checkoutAsGuest()">Checkout as Guest (B4U Only)</button>
+    </div>
+  </div>
+  <div class="loading-screen" id="loadingScreen">
+    <div class="loader"></div>
+  </div>
+  <div class="checkout-header">Checkout as Guest (B4U Only)</div>
   <a href="https://t.me/addlist/VGpZhvAy668yNThh" target="_blank" class="tg-logo">
     <img src="https://telegram.org/img/t_logo.png" alt="TG">
     <span>RAK.TF</span>
@@ -273,79 +207,102 @@ body, html {
     <img src="https://i.ibb.co/KzhVm7vX/your-logo.jpg" alt="RAK.TF Logo" style="max-width: 400px; width: 80%;" onerror="this.style.display='none'">
     <h1 style="font-size: 5.5rem; background: linear-gradient(90deg, var(--red), #ff4d4d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px var(--red);">RAK.TF</h1>
   </div>
-  <div class="auth-section">
-    <button class="auth-button" onclick="showLogin()">Login</button>
-    <button class="auth-button" onclick="showRegister()">Register</button>
-  </div>
   <div class="columns">
-    <div class="column-card" onclick="showPage('ccs')">
-      <h2 style="font-family: 'Orbitron', sans-serif;">CCS</h2>
-      <p style="font-family: 'Rajdhani', sans-serif; font-weight: 600;">Elite dumps & fullz</p>
-    </div>
-    <div class="column-card" onclick="showPage('prepaids')">
-      <h2 style="font-family: 'Orbitron', sans-serif;">Prepaids</h2>
-      <p style="font-family: 'Rajdhani', sans-serif; font-weight: 600;">Random balance cards</p>
-    </div>
-    <div class="column-card" onclick="showPage('b4u')">
-      <h2 style="font-family: 'Orbitron', sans-serif;">B4U Service</h2>
-      <p style="font-family: 'Rajdhani', sans-serif; font-weight: 600;">70% OFF – Next level delivery</p>
-    </div>
-    <div class="column-card" onclick="showPage('discover')">
-      <h2 style="font-family: 'Orbitron', sans-serif;">Discover / Logs</h2>
-      <p style="font-family: 'Rajdhani', sans-serif; font-weight: 600;">Latest drops & activity</p>
-    </div>
+    <!-- Your existing column cards here -->
   </div>
   <!-- B4U Service Highlight -->
   <div class="b4u-hero">
-    <h2>B4U SERVICE</h2>
-    <p style="font-size: 1.8rem; margin: 20px 0; color: #eee;">70% OFF PREMIUM – FOOD / ELECTRONICS</p>
-    <p style="color: #ccc;">Min order $25 • Fast • Secure • Elite</p>
+    <!-- Your existing B4U content here -->
   </div>
   <div class="b4u-grid">
-    <div class="b4u-item" onclick="showOrderPage()">
-      <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1" alt="Food">
-      <div style="margin-top: 15px; font-size: 1.6rem;">Food Delivery</div>
-      <div style="color: var(--red); font-size: 1.6rem; font-weight: bold;">70% OFF</div>
-      <p>Wanna eat like this for half off? Place an order for dirt cheap!</p>
-    </div>
-    <div class="b4u-item">
-      <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f" alt="Electronics">
-      <div style="margin-top: 15px; font-size: 1.6rem;">Electronics</div>
-      <div style="color: var(--red); font-size: 1.6rem; font-weight: bold;">70% OFF – Coming Soon</div>
-    </div>
-    <div class="b4u-item">
-      <p>RIDES COMING SOON</p>
-    </div>
+    <!-- Your existing B4U items here -->
   </div>
   <div class="order-page" id="orderPage">
-    <h2>Place Your Order</h2>
-    <p>Where is your order going to be placed at?</p>
-    <div class="store-options">
-      <div class="store-option" onclick="selectStore('Store A')">
-        <p>Store A</p>
-      </div>
-      <div class="store-option" onclick="selectStore('Store B')">
-        <p>Store B</p>
-      </div>
-      <div class="store-option" onclick="selectStore('Store C')">
-        <p>Store C</p>
-      </div>
-    </div>
-    <button class="glow-button" onclick="placeOrder()">Place Order</button>
+    <!-- Your existing order page content here -->
   </div>
 </div>
+<div class="popup" id="popup">You must register before you can login.</div>
 <script>
-function showPage(page) {
-  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-  document.getElementById(page).classList.add('active');
-}
-
 function showLogin() {
-  alert('Login functionality not implemented yet.');
+  const authPage = document.getElementById('authPage');
+  const loginForm = `
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" class="auth-input" placeholder="Email">
+    <input type="password" id="loginPassword" class="auth-input" placeholder="Password">
+    <button class="auth-button" onclick="login()">Login</button>
+  `;
+  authPage.querySelector('.auth-container').innerHTML = loginForm;
 }
 
 function showRegister() {
-  alert('Register functionality not implemented yet.');
+  const authPage = document.getElementById('authPage');
+  const registerForm = `
+    <h2>Register</h2>
+    <input type="email" id="registerEmail" class="auth-input" placeholder="Email">
+    <input type="email" id="confirmEmail" class="auth-input" placeholder="Confirm Email">
+    <input type="password" id="registerPassword" class="auth-input" placeholder="Password">
+    <button class="auth-button" onclick="register()">Register</button>
+  `;
+  authPage.querySelector('.auth-container').innerHTML = registerForm;
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  const user = users.find(u => u.email === email && u.password === password);
+  if (user) {
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    hideAuthPage();
+  } else {
+    showPopup('You must register before you can login.');
+  }
+}
+
+function register() {
+  const email = document.getElementById('registerEmail').value;
+  const confirmEmail = document.getElementById('confirmEmail').value;
+  const password = document.getElementById('registerPassword').value;
+  if (email !== confirmEmail) {
+    alert('Emails do not match');
+    return;
+  }
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+  users.push({ email, password });
+  localStorage.setItem('users', JSON.stringify(users));
+  localStorage.setItem('currentUser', JSON.stringify({ email, password }));
+  hideAuthPage();
+}
+
+function hideAuthPage() {
+  document.getElementById('authPage').classList.add('hidden');
+  document.getElementById('app').classList.add('visible');
+}
+
+function showPopup(message) {
+  const popup = document.getElementById('popup');
+  popup.textContent = message;
+  popup.classList.add('visible');
+  setTimeout(() => {
+    popup.classList.remove('visible');
+  }, 3000);
+}
+
+function checkoutAsGuest() {
+  const loadingScreen = document.getElementById('loadingScreen');
+  loadingScreen.classList.remove('hidden');
+  setTimeout(() => {
+    loadingScreen.classList.add('hidden');
+    document.getElementById('authPage').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    showOrderPage();
+  }, 2000);
+}
+
+// Existing functions
+function showPage(page) {
+  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
 }
 
 function showOrderPage() {
@@ -361,12 +318,17 @@ function placeOrder() {
   alert('Order placed successfully!');
 }
 
+// Initialization
 setTimeout(() => {
   document.getElementById('loader').classList.add('fade-out');
   setTimeout(() => {
     document.getElementById('loader').remove();
-    document.getElementById('app').classList.add('visible');
-    document.querySelectorAll('.column-card, .b4u-item, .store-option').forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
+    if (!localStorage.getItem('currentUser')) {
+      document.getElementById('authPage').classList.remove('hidden');
+    } else {
+      document.getElementById('app').classList.add('visible');
+      document.querySelectorAll('.column-card, .b4u-item, .store-option').forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
+    }
   }, 1200);
 }, 3000);
 
