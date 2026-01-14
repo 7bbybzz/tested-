@@ -1,346 +1,794 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>RAK.TF • Elite Vault</title>
-<style>
-:root {
-  --red: #C41E3A;
-  --black: #0F0F0F;
-  --dark: #1A1A1A;
-  --glow: 0 0 15px rgba(196,30,58,0.7);
-  --transition: 0.8s cubic-bezier(0.25,0.8,0.25,1);
-}
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-body, html {
-  height: 100%;
-  font-family: 'Rajdhani', sans-serif;
-  background: var(--black);
-  color: #fff;
-  overflow: hidden;
-}
-#loader {
-  position: fixed;
-  inset: 0;
-  background: var(--black);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  transition: opacity 1s;
-}
-#loader.fade-out {
-  opacity: 0;
-}
-#app {
-  opacity: 0;
-  transition: opacity 1.5s ease 0.5s;
-  height: 100%;
-  overflow-y: auto;
-}
-#app.visible {
-  opacity: 1;
-}
-.auth-page {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--black);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  transition: opacity 0.5s;
-}
-.auth-page.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-.auth-container {
-  background: rgba(15,15,15,0.95);
-  border-radius: 16px;
-  padding: 40px;
-  width: 350px;
-  box-shadow: var(--glow);
-  border: 1px solid rgba(196,30,58,0.3);
-  backdrop-filter: blur(12px);
-  text-align: center;
-}
-.auth-container h2 {
-  font-family: 'Orbitron', sans-serif;
-  color: var(--red);
-  text-shadow: 0 0 10px var(--red);
-  font-size: 2.2rem;
-  margin-bottom: 20px;
-}
-.auth-button {
-  padding: 10px 20px;
-  background: var(--red);
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: var(--transition);
-  margin: 10px;
-}
-.auth-button:hover {
-  transform: scale(1.1);
-  box-shadow: var(--glow);
-}
-.auth-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid var(--red);
-  border-radius: 5px;
-  background: var(--dark);
-  color: white;
-}
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: var(--red);
-  color: white;
-  padding: 20px;
-  border-radius: 10px;
-  z-index: 10001;
-  opacity: 0;
-  transition: opacity 0.5s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.popup.visible {
-  opacity: 1;
-}
-.bubble {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  background: rgba(196,30,58,0.1);
-  border-radius: 50%;
-  animation: float 5s infinite ease-in-out;
-  pointer-events: none;
-}
-@keyframes float {
-  0% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-20px) scale(1.2); }
-  100% { transform: translateY(0) scale(1); }
-}
-.checkout-header {
-  text-align: center;
-  padding: 20px;
-  background: linear-gradient(135deg, rgba(196,30,58,0.4), rgba(0,0,0,0.8));
-  color: var(--red);
-  font-size: 2rem;
-  font-weight: bold;
-  animation: glow 2s infinite alternate;
-}
-@keyframes glow {
-  0% { text-shadow: 0 0 10px var(--red); }
-  100% { text-shadow: 0 0 20px var(--red); }
-}
-.loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--black);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9998;
-  opacity: 1;
-  transition: opacity 1s;
-}
-.loading-screen.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-.loader {
-  border: 16px solid var(--dark);
-  border-top: 16px solid var(--red);
-  border-radius: 50%;
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-}
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAK.TF - Marketplace</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff0f0f; /* Neon Red */
+            --primary-dark: #8a0000;
+            --bg: #050505;
+            --surface: #0f0f0f;
+            --surface-hover: #1a1a1a;
+            --text: #ffffff;
+            --text-muted: #888;
+            --glass: rgba(15, 15, 15, 0.85);
+            --border-radius: 12px;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--bg);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            height: 100vh;
+        }
+
+        /* --- Particle Background --- */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        /* --- Utilities --- */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.8s ease forwards; }
+        .slide-up { animation: slideUp 0.6s ease forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        /* --- Button Styles --- */
+        .btn {
+            padding: 10px 20px;
+            border: 1px solid var(--primary);
+            background: rgba(255, 15, 15, 0.1);
+            color: var(--primary);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 15, 15, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border-color: var(--text-muted);
+            color: var(--text-muted);
+        }
+        .btn-outline:hover {
+            border-color: var(--text);
+            color: var(--text);
+            background: rgba(255,255,255,0.05);
+            box-shadow: none;
+        }
+
+        /* --- Input Styles --- */
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #333;
+            color: white;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(255, 15, 15, 0.2);
+        }
+
+        /* --- Intro Screen --- */
+        #intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .intro-text {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px var(--primary);
+        }
+
+        /* --- Auth Screen --- */
+        #auth-screen {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-box {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: var(--border-radius);
+            width: 350px;
+            border: 1px solid #222;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            text-align: center;
+        }
+
+        .auth-toggle {
+            margin-top: 15px;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .auth-toggle:hover { color: var(--primary); }
+
+        /* --- Main App --- */
+        #app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #222;
+            margin-bottom: 30px;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        
+        .nav-links button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            margin: 0 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        .nav-links button.active, .nav-links button:hover {
+            color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .user-actions { display: flex; gap: 15px; }
+        .icon-btn { 
+            background: var(--surface); 
+            border: 1px solid #333; 
+            width: 40px; height: 40px; 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: var(--transition);
+            color: white;
+            position: relative;
+        }
+        .icon-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .cart-badge {
+            position: absolute; top: -5px; right: -5px;
+            background: var(--primary); color: white;
+            font-size: 0.6rem; padding: 2px 6px; border-radius: 10px;
+        }
+
+        /* Announcement Box */
+        .announcement-box {
+            background: linear-gradient(45deg, #1a0000, #000);
+            border: 1px solid var(--primary);
+            padding: 20px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(255, 15, 15, 0.2);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* Product Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid #222;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+
+        .card h3 { margin-bottom: 10px; font-size: 1.2rem; }
+        .card .price { color: var(--primary); font-size: 1.1rem; font-weight: bold; margin-bottom: 10px; display: block;}
+        .card .desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.4; }
+
+        /* --- Modals (Profile, Cart, etc) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        .modal {
+            background: var(--surface);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            width: 450px;
+            max-width: 90%;
+            border: 1px solid #333;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 1px solid #222; padding-bottom: 10px;
+        }
+
+        .close-modal { cursor: pointer; color: var(--text-muted); font-size: 1.2rem; }
+        .close-modal:hover { color: white; }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed; bottom: 20px; right: 20px; z-index: 3000;
+        }
+        .toast {
+            background: var(--surface);
+            border-left: 3px solid var(--primary);
+            padding: 15px 20px;
+            margin-top: 10px;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            animation: slideInRight 0.3s ease;
+            display: flex; align-items: center; gap: 10px;
+        }
+        @keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+    </style>
 </head>
 <body>
-<div id="loader">
-  <h1 style="color: var(--red); font-family: 'Orbitron', sans-serif; font-size: 6rem;">RAK.TF</h1>
-</div>
-<div id="app">
-  <div class="auth-page" id="authPage">
-    <div class="auth-container">
-      <h2>RAK.TF</h2>
-      <button class="auth-button" onclick="showLogin()">Login</button>
-      <button class="auth-button" onclick="showRegister()">Register</button>
-      <button class="auth-button" onclick="checkoutAsGuest()">Checkout as Guest (B4U Only)</button>
+
+    <canvas id="particles"></canvas>
+
+    <div id="intro-screen">
+        <div class="intro-text fade-in">WELCOME TO RAK.TF</div>
+        <div style="margin-top: 10px; color: var(--primary);" class="fade-in"><i class="fas fa-circle-notch fa-spin"></i> Loading Assets...</div>
     </div>
-  </div>
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loader"></div>
-  </div>
-  <div class="checkout-header">Checkout as Guest (B4U Only)</div>
-  <a href="https://t.me/addlist/VGpZhvAy668yNThh" target="_blank" class="tg-logo">
-    <img src="https://telegram.org/img/t_logo.png" alt="TG">
-    <span>RAK.TF</span>
-  </a>
-  <div style="text-align: center; margin: 40px 0;">
-    <img src="https://i.ibb.co/KzhVm7vX/your-logo.jpg" alt="RAK.TF Logo" style="max-width: 400px; width: 80%;" onerror="this.style.display='none'">
-    <h1 style="font-size: 5.5rem; background: linear-gradient(90deg, var(--red), #ff4d4d); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 40px var(--red);">RAK.TF</h1>
-  </div>
-  <div class="columns">
-    <!-- Your existing column cards here -->
-  </div>
-  <!-- B4U Service Highlight -->
-  <div class="b4u-hero">
-    <!-- Your existing B4U content here -->
-  </div>
-  <div class="b4u-grid">
-    <!-- Your existing B4U items here -->
-  </div>
-  <div class="order-page" id="orderPage">
-    <!-- Your existing order page content here -->
-  </div>
-</div>
-<div class="popup" id="popup">You must register before you can login.</div>
-<script>
-function showLogin() {
-  const authPage = document.getElementById('authPage');
-  const loginForm = `
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" class="auth-input" placeholder="Email">
-    <input type="password" id="loginPassword" class="auth-input" placeholder="Password">
-    <button class="auth-button" onclick="login()">Login</button>
-  `;
-  authPage.querySelector('.auth-container').innerHTML = loginForm;
-}
 
-function showRegister() {
-  const authPage = document.getElementById('authPage');
-  const registerForm = `
-    <h2>Register</h2>
-    <input type="email" id="registerEmail" class="auth-input" placeholder="Email">
-    <input type="email" id="confirmEmail" class="auth-input" placeholder="Confirm Email">
-    <input type="password" id="registerPassword" class="auth-input" placeholder="Password">
-    <button class="auth-button" onclick="register()">Register</button>
-  `;
-  authPage.querySelector('.auth-container').innerHTML = registerForm;
-}
+    <div id="auth-screen" class="hidden">
+        <div class="auth-box slide-up">
+            <h2 id="auth-title" style="margin-bottom: 20px;">LOGIN</h2>
+            <input type="text" id="username" placeholder="Username">
+            <input type="password" id="password" placeholder="Password">
+            <button class="btn" onclick="handleAuth()" style="width: 100%;">Enter System</button>
+            <p class="auth-toggle" onclick="toggleAuthMode()">No account? Register here.</p>
+        </div>
+    </div>
 
-function login() {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  const user = users.find(u => u.email === email && u.password === password);
-  if (user) {
-    localStorage.setItem('currentUser', JSON.stringify(user));
-    hideAuthPage();
-  } else {
-    showPopup('You must register before you can login.');
-  }
-}
+    <div id="app-container" class="hidden">
+        <header class="slide-up">
+            <div class="logo">RAK.TF <span style="font-size: 0.8rem; color: #444;">BETA</span></div>
+            <nav class="nav-links">
+                <button class="active" onclick="filterCategory('all')">Home</button>
+                <button onclick="filterCategory('logs')">Logs</button>
+                <button onclick="filterCategory('food')">Food</button>
+                <button onclick="openModal('moreModal')">More</button>
+            </nav>
+            <div class="user-actions">
+                <div class="icon-btn" onclick="openCart()">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-badge" id="cart-count">0</span>
+                </div>
+                <div class="icon-btn" onclick="openProfile()">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <div class="icon-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+            </div>
+        </header>
 
-function register() {
-  const email = document.getElementById('registerEmail').value;
-  const confirmEmail = document.getElementById('confirmEmail').value;
-  const password = document.getElementById('registerPassword').value;
-  if (email !== confirmEmail) {
-    alert('Emails do not match');
-    return;
-  }
-  const users = JSON.parse(localStorage.getItem('users') || '[]');
-  users.push({ email, password });
-  localStorage.setItem('users', JSON.stringify(users));
-  localStorage.setItem('currentUser', JSON.stringify({ email, password }));
-  hideAuthPage();
-}
+        <div class="announcement-box slide-up" style="animation-delay: 0.1s;">
+            <h2 style="margin-bottom: 5px;">(NOT DECIDED YET)</h2>
+            <p style="color: var(--primary); letter-spacing: 2px; font-weight: bold;">COMING BACK SOON</p>
+        </div>
 
-function hideAuthPage() {
-  document.getElementById('authPage').classList.add('hidden');
-  document.getElementById('app').classList.add('visible');
-}
+        <div class="filters slide-up" style="animation-delay: 0.2s;">
+            <button class="btn btn-outline" onclick="filterCategory('spammed')">Spammed</button>
+            <button class="btn btn-outline" onclick="filterCategory('logs')">Logs</button>
+            <button class="btn btn-outline" onclick="filterCategory('food')">Food</button>
+        </div>
 
-function showPopup(message) {
-  const popup = document.getElementById('popup');
-  popup.textContent = message;
-  popup.classList.add('visible');
-  setTimeout(() => {
-    popup.classList.remove('visible');
-  }, 3000);
-}
+        <div id="product-grid" class="grid slide-up" style="animation-delay: 0.3s;">
+            </div>
+    </div>
 
-function checkoutAsGuest() {
-  const loadingScreen = document.getElementById('loadingScreen');
-  loadingScreen.classList.remove('hidden');
-  setTimeout(() => {
-    loadingScreen.classList.add('hidden');
-    document.getElementById('authPage').classList.add('hidden');
-    document.getElementById('app').classList.add('visible');
-    showOrderPage();
-  }, 2000);
-}
+    <div id="profileModal" class="modal-overlay hidden">
+        <div class="modal slide-up">
+            <div class="modal-header">
+                <h3>Profile Settings</h3>
+                <span class="close-modal" onclick="closeModal('profileModal')">&times;</span>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 10px;">Change Credentials</h4>
+                <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">
+                    Contact <b>@torements</b> or <b>@yourboring</b> with SS proof + desired email/pass.
+                </p>
+                <div id="key-section">
+                    <input type="text" id="admin-key" placeholder="Enter Approval Key">
+                    <button class="btn" onclick="checkKey()">Unlock Edit Mode</button>
+                </div>
+                <div id="edit-form" class="hidden" style="margin-top: 15px; border-top: 1px solid #333; padding-top: 15px;">
+                    <input type="email" id="new-email" placeholder="New Email">
+                    <input type="password" id="new-pass" placeholder="New Password">
+                    <button class="btn" onclick="updateCredentials()">Update Now</button>
+                </div>
+            </div>
 
-// Existing functions
-function showPage(page) {
-  document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
-  document.getElementById(page).classList.add('active');
-}
+            <div style="border-top: 1px solid #333; padding-top: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 10px;">Open Order Refund</h4>
+                <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">Only valid Order IDs from previous purchases.</p>
+                <input type="text" id="refund-order-id" placeholder="Paste Order ID">
+                <button class="btn btn-outline" onclick="processRefund()">Submit Dispute</button>
+            </div>
+        </div>
+    </div>
 
-function showOrderPage() {
-  document.getElementById('orderPage').classList.add('active');
-  document.querySelectorAll('.store-option').forEach((s, i) => setTimeout(() => s.classList.add('visible'), i * 150));
-}
+    <div id="cartModal" class="modal-overlay hidden">
+        <div class="modal slide-up">
+            <div class="modal-header">
+                <h3>Your Cart</h3>
+                <span class="close-modal" onclick="closeModal('cartModal')">&times;</span>
+            </div>
+            <div id="cart-items" style="max-height: 300px; overflow-y: auto; margin-bottom: 20px;">
+                <p style="text-align: center; color: #666;">Cart is empty</p>
+            </div>
+            <div style="border-top: 1px solid #333; padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.2rem;">Total: <span id="cart-total" style="color: var(--primary);">$0.00</span></div>
+                <button class="btn" onclick="checkout()">Checkout</button>
+            </div>
+        </div>
+    </div>
 
-function selectStore(store) {
-  alert(`You selected ${store}`);
-}
+    <div id="moreModal" class="modal-overlay hidden">
+        <div class="modal slide-up">
+            <div class="modal-header">
+                <h3>More Info</h3>
+                <span class="close-modal" onclick="closeModal('moreModal')">&times;</span>
+            </div>
+            <p>Terms of Service...</p>
+            <p>FAQ...</p>
+            <p>Support...</p>
+        </div>
+    </div>
 
-function placeOrder() {
-  alert('Order placed successfully!');
-}
+    <div id="toast-container"></div>
 
-// Initialization
-setTimeout(() => {
-  document.getElementById('loader').classList.add('fade-out');
-  setTimeout(() => {
-    document.getElementById('loader').remove();
-    if (!localStorage.getItem('currentUser')) {
-      document.getElementById('authPage').classList.remove('hidden');
-    } else {
-      document.getElementById('app').classList.add('visible');
-      document.querySelectorAll('.column-card, .b4u-item, .store-option').forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 150));
-    }
-  }, 1200);
-}, 3000);
+    <script>
+        // --- 1. Data & Configuration ---
+        const STORE_KEY = 'raktf_data';
+        let currentUser = null;
+        let cart = [];
+        let isRegistering = false;
 
-// Bubble animation
-for (let i = 0; i < 10; i++) {
-  let bubble = document.createElement('div');
-  bubble.className = 'bubble';
-  bubble.style.left = Math.random() * 100 + 'vw';
-  bubble.style.top = Math.random() * 100 + 'vh';
-  bubble.style.animationDelay = Math.random() * 5 + 's';
-  document.body.appendChild(bubble);
-}
-</script>
+        // Generate Products
+        const products = [
+            { 
+                id: 'spam-001', 
+                name: 'Spammed Pieces', 
+                price: 0.65, 
+                category: 'spammed', 
+                desc: '80% valid rate spammed pieces (good if u need leads)' 
+            }
+        ];
+
+        // Generate placeholders for Logs and Food
+        for(let i=1; i<=5; i++) {
+            products.push({
+                id: `log-${i}`,
+                name: `Log Item #${i}`,
+                price: (Math.random() * 5 + 1).toFixed(2),
+                category: 'logs',
+                desc: '(description not yet decided) - High quality logs'
+            });
+        }
+        for(let i=1; i<=5; i++) {
+            products.push({
+                id: `food-${i}`,
+                name: `Food Account #${i}`,
+                price: (Math.random() * 3 + 2).toFixed(2),
+                category: 'food',
+                desc: '(description not yet decided) - fast delivery'
+            });
+        }
+
+        // --- 2. Initialization & Navigation ---
+
+        window.onload = () => {
+            initParticles();
+            
+            // Check Local Storage for session
+            const storedUser = localStorage.getItem('raktf_current_user');
+            
+            setTimeout(() => {
+                document.getElementById('intro-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('intro-screen').classList.add('hidden');
+                    
+                    if(storedUser) {
+                        currentUser = JSON.parse(storedUser);
+                        loadDashboard();
+                    } else {
+                        document.getElementById('auth-screen').classList.remove('hidden');
+                    }
+                }, 800);
+            }, 2500); // 2.5s loading screen
+        };
+
+        function toggleAuthMode() {
+            isRegistering = !isRegistering;
+            document.getElementById('auth-title').innerText = isRegistering ? 'REGISTER' : 'LOGIN';
+            document.querySelector('.auth-toggle').innerText = isRegistering ? 'Have an account? Login.' : 'No account? Register here.';
+            // Add fade effect for smoothness
+            const box = document.querySelector('.auth-box');
+            box.classList.remove('slide-up');
+            void box.offsetWidth; // trigger reflow
+            box.classList.add('slide-up');
+        }
+
+        // --- 3. Authentication Logic ---
+
+        function handleAuth() {
+            const userIn = document.getElementById('username').value;
+            const passIn = document.getElementById('password').value;
+
+            if(!userIn || !passIn) {
+                showToast('Please fill in all fields', 'error');
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem('raktf_users') || '[]');
+
+            if (isRegistering) {
+                if(users.find(u => u.username === userIn)) {
+                    showToast('Username taken', 'error');
+                    return;
+                }
+                const newUser = { username: userIn, password: passIn, orders: [] };
+                users.push(newUser);
+                localStorage.setItem('raktf_users', JSON.stringify(users));
+                showToast('Registered successfully! Logging in...', 'success');
+                loginUser(newUser);
+            } else {
+                const found = users.find(u => u.username === userIn && u.password === passIn);
+                if(found) {
+                    loginUser(found);
+                } else {
+                    showToast('Invalid credentials', 'error');
+                }
+            }
+        }
+
+        function loginUser(user) {
+            currentUser = user;
+            localStorage.setItem('raktf_current_user', JSON.stringify(user));
+            
+            // Transition
+            const authScreen = document.getElementById('auth-screen');
+            authScreen.style.opacity = '0';
+            setTimeout(() => {
+                authScreen.classList.add('hidden');
+                loadDashboard();
+            }, 500);
+        }
+
+        function logout() {
+            localStorage.removeItem('raktf_current_user');
+            location.reload();
+        }
+
+        // --- 4. Dashboard Logic ---
+
+        function loadDashboard() {
+            const app = document.getElementById('app-container');
+            app.classList.remove('hidden');
+            app.classList.add('fade-in');
+            renderProducts(products); // Show all initially
+        }
+
+        function renderProducts(items) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            
+            items.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card fade-in';
+                card.innerHTML = `
+                    <h3>${item.name}</h3>
+                    <span class="price">$${item.price}</span>
+                    <p class="desc">${item.desc}</p>
+                    <button class="btn" onclick="addToCart('${item.id}')">Add to Cart</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterCategory(cat) {
+            // Update active state on nav
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active'); // Assumes button clicked
+
+            if(cat === 'all') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === cat);
+                renderProducts(filtered);
+            }
+        }
+
+        // --- 5. Cart Logic ---
+
+        function addToCart(id) {
+            const item = products.find(p => p.id === id);
+            cart.push(item);
+            updateCartUI();
+            showToast(`Added ${item.name}`, 'success');
+        }
+
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.length;
+        }
+
+        function openCart() {
+            const container = document.getElementById('cart-items');
+            container.innerHTML = '';
+            let total = 0;
+
+            if(cart.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#666; padding:20px;">Cart is empty</p>';
+            } else {
+                cart.forEach((item, index) => {
+                    total += parseFloat(item.price);
+                    const row = document.createElement('div');
+                    row.style.display = 'flex';
+                    row.style.justifyContent = 'space-between';
+                    row.style.marginBottom = '10px';
+                    row.style.borderBottom = '1px solid #222';
+                    row.style.paddingBottom = '5px';
+                    row.innerHTML = `
+                        <span>${item.name}</span>
+                        <div style="display:flex; gap:10px;">
+                            <span style="color:var(--primary)">$${item.price}</span>
+                            <i class="fas fa-trash" style="cursor:pointer; color:#555;" onclick="removeFromCart(${index})"></i>
+                        </div>
+                    `;
+                    container.appendChild(row);
+                });
+            }
+            document.getElementById('cart-total').innerText = '$' + total.toFixed(2);
+            openModal('cartModal');
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            openCart(); // Re-render
+            updateCartUI();
+        }
+
+        function checkout() {
+            if(cart.length === 0) return;
+
+            // Generate Order ID
+            const orderId = 'ORD-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            
+            // Save to user history
+            let users = JSON.parse(localStorage.getItem('raktf_users'));
+            const userIndex = users.findIndex(u => u.username === currentUser.username);
+            
+            if(!users[userIndex].orders) users[userIndex].orders = [];
+            users[userIndex].orders.push({
+                id: orderId,
+                items: cart,
+                date: new Date().toISOString()
+            });
+
+            localStorage.setItem('raktf_users', JSON.stringify(users));
+            currentUser = users[userIndex]; // Update local state
+            localStorage.setItem('raktf_current_user', JSON.stringify(currentUser));
+
+            cart = [];
+            updateCartUI();
+            closeModal('cartModal');
+            showToast(`Purchase Successful! Order ID: ${orderId}`, 'success');
+        }
+
+        // --- 6. Profile & Refund Logic ---
+
+        function openProfile() {
+            openModal('profileModal');
+            // Reset state
+            document.getElementById('key-section').classList.remove('hidden');
+            document.getElementById('edit-form').classList.add('hidden');
+            document.getElementById('admin-key').value = '';
+        }
+
+        function checkKey() {
+            const input = document.getElementById('admin-key').value;
+            if(input === 'rak.tf776') {
+                showToast('Access Granted', 'success');
+                document.getElementById('key-section').classList.add('hidden');
+                document.getElementById('edit-form').classList.remove('hidden');
+            } else {
+                showToast('Invalid Key', 'error');
+            }
+        }
+
+        function updateCredentials() {
+            const newEmail = document.getElementById('new-email').value;
+            const newPass = document.getElementById('new-pass').value;
+
+            if(newEmail && newPass) {
+                // Update in local storage
+                let users = JSON.parse(localStorage.getItem('raktf_users'));
+                const userIndex = users.findIndex(u => u.username === currentUser.username);
+                
+                users[userIndex].email = newEmail;
+                users[userIndex].password = newPass;
+                
+                localStorage.setItem('raktf_users', JSON.stringify(users));
+                showToast('Credentials Updated', 'success');
+                closeModal('profileModal');
+            }
+        }
+
+        function processRefund() {
+            const inputId = document.getElementById('refund-order-id').value.trim();
+            
+            // Check if user has this order
+            const orderExists = currentUser.orders && currentUser.orders.find(o => o.id === inputId);
+
+            if(orderExists) {
+                showToast('Refund Request Sent to Admin', 'success');
+                closeModal('profileModal');
+            } else {
+                showToast('Invalid Order ID (Must be yours)', 'error');
+            }
+        }
+
+        // --- 7. UI Utilities ---
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function showToast(msg, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            const icon = type === 'success' ? '<i class="fas fa-check-circle" style="color:limegreen"></i>' : '<i class="fas fa-exclamation-circle" style="color:red"></i>';
+            toast.innerHTML = `${icon} <span>${msg}</span>`;
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- 8. Particle Effect (Visuals) ---
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particlesArray = [];
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2;
+                    this.speedX = Math.random() * 1 - 0.5;
+                    this.speedY = Math.random() * 1 - 0.5;
+                }
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+                    if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+                }
+                draw() {
+                    ctx.fillStyle = '#ff0f0f';
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 50; i++) particlesArray.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particlesArray.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+    </script>
 </body>
 </html>
