@@ -3,244 +3,419 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAK.TF | Private Index</title>
+    <title>RAK.TF | Secure Marketplace</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&family=Space+Mono&display=swap" rel="stylesheet">
-   
+    
     <style>
         :root {
             --primary: #ff0f0f;
-            --primary-glow: rgba(255, 15, 15, 0.5);
+            --primary-glow: rgba(255, 15, 15, 0.6);
             --bg: #050505;
-            --card: #0d0d0d;
+            --surface: #0a0a0a;
+            --card: #0f0f0f;
             --border: #1a1a1a;
             --text: #ffffff;
-            --text-dim: #888;
-            --transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-dim: #777;
+            --transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
+
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow-x: hidden; height: 100vh; }
-        /* --- Animations --- */
-        .fade-out { opacity: 0; visibility: hidden; transition: var(--transition); }
-        .fade-in { opacity: 1 !important; visibility: visible !important; }
-        .slide-up { animation: slideUp 0.8s ease forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        /* --- Loading Screen --- */
-        #loader {
-            position: fixed; inset: 0; background: var(--bg); z-index: 9999;
+        body { background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
+
+        /* --- High-End Background Effect --- */
+        #bg-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a0505 0%, #050505 100%);
+            z-index: -1;
+        }
+        .star { position: absolute; background: white; border-radius: 50%; opacity: 0.5; animation: twinkle var(--d) infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        /* --- Page Loading System --- */
+        #global-loader {
+            position: fixed; inset: 0; background: var(--bg); z-index: 10000;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease;
         }
-        .loader-text { font-size: 2.5rem; font-weight: 900; letter-spacing: 5px; color: var(--primary); text-shadow: 0 0 20px var(--primary-glow); opacity: 0; }
-        /* --- Auth Screen --- */
-        #auth-wrap {
-            position: fixed; inset: 0; display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; z-index: 1000; background: radial-gradient(circle at center, #1a0505 0%, #050505 100%);
+        .glitch-text { font-size: 3rem; font-weight: 900; letter-spacing: 10px; color: var(--primary); text-shadow: 0 0 30px var(--primary-glow); animation: pulse 2s infinite; }
+        
+        /* --- Utilities --- */
+        .page { position: fixed; inset: 0; padding: 40px; overflow-y: auto; opacity: 0; transform: scale(1.05); pointer-events: none; transition: var(--transition); z-index: 10; }
+        .page.active { opacity: 1; transform: scale(1); pointer-events: all; z-index: 20; }
+        .hidden { display: none !important; }
+        .btn { cursor: pointer; border: none; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* --- Navigation & Header --- */
+        header { 
+            position: fixed; top: 0; width: 100%; padding: 25px 50px; 
+            display: flex; justify-content: space-between; align-items: center; z-index: 100;
+            background: linear-gradient(to bottom, rgba(5,5,5,0.8), transparent);
+            backdrop-filter: blur(10px);
         }
-        .auth-card { background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--border); width: 350px; text-align: center; }
-        /* --- Main App Style --- */
-        #main-app { opacity: 0; visibility: hidden; padding: 20px; max-width: 1200px; margin: 0 auto; }
-       
-        header { display: flex; justify-content: space-between; align-items: center; padding: 30px 0; }
-        .nav-bar { display: flex; gap: 15px; background: #111; padding: 8px; border-radius: 50px; border: 1px solid var(--border); }
-        .nav-bar button { background: none; border: none; color: var(--text-dim); padding: 10px 25px; cursor: pointer; border-radius: 40px; transition: var(--transition); font-weight: 600; }
-        .nav-bar button.active { background: var(--primary); color: white; box-shadow: 0 0 15px var(--primary-glow); }
-        /* --- Eye Catching Announcement --- */
-        .hero-banner {
-            background: linear-gradient(45deg, #111, #1a0505);
-            border: 1px solid var(--primary);
-            padding: 40px; border-radius: 20px; margin-bottom: 40px; text-align: center;
-            position: relative; overflow: hidden;
+        .logo-box img { height: 45px; filter: drop-shadow(0 0 10px var(--primary-glow)); }
+        
+        .nav-center { display: flex; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 50px; border: 1px solid var(--border); }
+        .nav-center button { background: none; color: var(--text-dim); padding: 10px 25px; border-radius: 40px; font-weight: 600; }
+        .nav-center button.active { background: var(--primary); color: white; box-shadow: 0 0 20px var(--primary-glow); }
+
+        /* --- Announcement Box --- */
+        .announcement-bar {
+            background: rgba(255,15,15,0.1); border: 1px solid var(--primary);
+            padding: 30px; border-radius: 15px; text-align: center; margin-top: 80px;
+            box-shadow: 0 0 40px rgba(255,15,15,0.05);
         }
-        .hero-banner h1 { font-size: 3rem; font-weight: 900; text-transform: uppercase; font-family: 'Space Mono'; }
-        .hero-banner p { color: var(--primary); letter-spacing: 4px; font-weight: bold; }
-        /* --- Dynamic Content Area --- */
-        #page-content { min-height: 400px; transition: var(--transition); }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-       
-        .item-card {
-            background: var(--card); border: 1px solid var(--border); padding: 25px; border-radius: 15px;
-            transition: var(--transition); cursor: pointer; position: relative;
+        .announcement-bar h2 { font-family: 'Space Mono'; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* --- Grid & Cards --- */
+        .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
+        .card { 
+            background: var(--card); border: 1px solid var(--border); padding: 30px; border-radius: 20px;
+            transition: 0.4s; position: relative; overflow: hidden;
         }
-        .item-card:hover { border-color: var(--primary); transform: translateY(-5px); background: #141414; }
-        .item-card h3 { margin: 10px 0; font-size: 1.2rem; }
-        .item-card .price { color: var(--primary); font-weight: 900; font-size: 1.4rem; }
-        /* --- Profile Modal --- */
-        .modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000;
-            display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px);
+        .card:hover { border-color: var(--primary); transform: translateY(-10px); background: #111; }
+        .card h3 { font-size: 1.4rem; margin-bottom: 10px; }
+        .card .desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 25px; line-height: 1.6; }
+        .card .price-tag { font-size: 1.8rem; font-weight: 900; color: var(--primary); margin-bottom: 15px; }
+
+        /* --- Crypto Gateway --- */
+        .crypto-modal { background: var(--surface); padding: 40px; border-radius: 30px; border: 1px solid var(--primary); width: 100%; max-width: 500px; text-align: center; }
+        .crypto-option { 
+            display: flex; align-items: center; justify-content: space-between; 
+            padding: 20px; border: 1px solid var(--border); border-radius: 15px; margin-bottom: 15px; cursor: pointer;
         }
-        .modal-content { background: var(--card); border: 1px solid var(--border); padding: 40px; border-radius: 20px; width: 450px; position: relative; }
-        /* --- UI Elements --- */
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid var(--border); color: white; border-radius: 8px; margin-bottom: 15px; outline: none; }
-        input:focus { border-color: var(--primary); }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        .btn-main:hover { opacity: 0.8; box-shadow: 0 0 20px var(--primary-glow); }
-        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--text-dim); }
-        .hidden { display: none; }
+        .crypto-option:hover { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+        .crypto-option i { font-size: 2rem; }
+        .address-box { background: #000; padding: 15px; border: 1px dashed var(--primary); font-family: 'Space Mono'; font-size: 0.8rem; word-break: break-all; margin: 20px 0; }
+
+        /* --- Order Log --- */
+        .order-row { background: #111; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid var(--primary); }
+
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
     </style>
 </head>
 <body>
-    <div id="loader">
-        <div class="loader-text" id="welcome-text">WELCOME TO RAK.TF!</div>
+
+    <div id="bg-canvas"></div>
+
+    <div id="global-loader">
+        <div class="glitch-text">RAK.TF</div>
+        <p style="margin-top: 20px; color: var(--text-dim); letter-spacing: 5px;">ESTABLISHING SECURE CONNECTION...</p>
     </div>
-    <div id="auth-wrap">
-        <div class="auth-card">
-            <h2 style="margin-bottom: 20px;">ACCESS PANEL</h2>
-            <input type="text" id="user-in" placeholder="Username">
-            <input type="password" id="pass-in" placeholder="Password">
-            <button class="btn-main" onclick="handleLogin()">INITIALIZE SESSION</button>
+
+    <header id="main-header" class="hidden">
+        <div class="logo-box">
+            <img src="https://i.ibb.co/KzhVm7vX/raklogo.png" alt="RAK.TF">
         </div>
-    </div>
-    <div id="main-app">
-        <header>
-            <div style="font-size: 1.5rem; font-weight: 900; color: var(--primary);">RAK.TF</div>
-            <nav class="nav-bar">
-                <button class="active" onclick="switchPage('home', this)">Home</button>
-                <button onclick="switchPage('logs', this)">Logs</button>
-                <button onclick="switchPage('food', this)">Food</button>
-            </nav>
-            <div style="display:flex; gap:15px; align-items:center;">
-                <div id="cart-icon" style="cursor:pointer;"><i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span></div>
-                <div onclick="openProfile()" style="cursor:pointer; background: #111; padding: 10px; border-radius: 50%; border: 1px solid var(--border);">
-                    <i class="fas fa-user-shield"></i>
+        <nav class="nav-center">
+            <button class="active" onclick="navigateTo('shop')">Home</button>
+            <button onclick="navigateTo('logs')">Logs</button>
+            <button onclick="navigateTo('food')">Food</button>
+        </nav>
+        <div style="display:flex; gap: 20px; align-items: center;">
+            <div onclick="navigateTo('cart')" style="cursor:pointer; position:relative;">
+                <i class="fas fa-shopping-bag" style="font-size: 1.5rem;"></i>
+                <span id="cart-count" style="position:absolute; top:-10px; right:-10px; background:var(--primary); font-size:0.7rem; padding:2px 6px; border-radius:50%;">0</span>
+            </div>
+            <div onclick="navigateTo('profile')" style="cursor:pointer;"><i class="fas fa-user-circle" style="font-size: 1.5rem;"></i></div>
+        </div>
+    </header>
+
+    <section id="page-shop" class="page">
+        <div class="announcement-bar">
+            <h2>OTP BOT</h2>
+            <p style="color: var(--primary); font-weight: bold; margin-top: 5px;">COMING BACK SOON</p>
+        </div>
+
+        <div class="market-grid" id="shop-grid">
+            </div>
+    </section>
+
+    <section id="page-cart" class="page">
+        <h1 style="font-size: 3rem; margin-bottom: 30px;">YOUR CART</h1>
+        <div id="cart-items-list" style="max-width: 800px;"></div>
+        
+        <div id="cart-summary" style="margin-top: 40px; background: var(--card); padding: 40px; border-radius: 20px; max-width: 800px; border: 1px solid var(--primary);">
+            <div style="display:flex; justify-content:space-between; font-size: 1.5rem; margin-bottom: 20px;">
+                <span>Total Amount:</span>
+                <span id="total-price" style="color:var(--primary); font-weight:900;">$0.00</span>
+            </div>
+            <button class="btn" style="width:100%; background:var(--primary); color:white; padding:20px; font-weight:900; border-radius:10px;" onclick="openCheckout()">PROCEED TO CRYPTO PAYMENT</button>
+            <button class="btn" style="width:100%; background:transparent; color:var(--text-dim); margin-top:10px;" onclick="navigateTo('shop')">CONTINUE SHOPPING</button>
+        </div>
+    </section>
+
+    <section id="page-profile" class="page">
+        <div style="display: flex; gap: 50px;">
+            <div style="flex: 1;">
+                <h1 style="font-size: 2.5rem; margin-bottom: 20px;">USER PROFILE</h1>
+                <div style="background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--border);">
+                    <h3>Settings</h3>
+                    <p style="color: var(--text-dim); font-size: 0.8rem; margin-bottom: 20px;">Change credentials (requires Admin Key)</p>
+                    
+                    <div id="admin-gate">
+                        <input type="password" id="admin-key-input" placeholder="Enter Approval Key">
+                        <button class="btn" style="background:var(--primary); color:white; padding:10px 20px; border-radius:5px;" onclick="unlockAdmin()">UNLOCK SETTINGS</button>
+                    </div>
+
+                    <div id="admin-fields" class="hidden">
+                        <p style="color: #ffaa00; font-size: 0.8rem; margin-bottom: 10px;">Contact @torements or @yourboring with SS proof.</p>
+                        <input type="email" placeholder="New Email">
+                        <input type="password" placeholder="New Password">
+                        <button class="btn" style="background:#222; color:white; padding:10px 20px; border-radius:5px;">UPDATE CREDENTIALS</button>
+                    </div>
+                </div>
+
+                <div style="background: var(--card); padding: 30px; border-radius: 20px; border: 1px solid var(--border); margin-top: 20px;">
+                    <h3>Refund Request</h3>
+                    <input type="text" id="refund-order-id" placeholder="Enter Order ID">
+                    <button class="btn" style="background:transparent; border:1px solid var(--primary); color:white; padding:10px 20px; border-radius:5px;" onclick="requestRefund()">DISPUTE ORDER</button>
                 </div>
             </div>
-        </header>
-        <div class="hero-banner slide-up">
-            <p>SYSTEM STATUS: ACTIVE</p>
-            <h1>(NOT DECIDED YET) COMING BACK SOON</h1>
-        </div>
-        <div id="page-content" class="slide-up">
-            </div>
-    </div>
-    <div id="profile-modal" class="modal">
-        <div class="modal-content">
-            <i class="fas fa-times close-modal" onclick="closeModal()"></i>
-            <h2 style="color: var(--primary); margin-bottom: 5px;">PROFILE SETTINGS</h2>
-            <p style="font-size: 0.8rem; color: var(--text-dim); margin-bottom: 20px;">Manage your secure credentials.</p>
-           
-            <div id="key-gate">
-                <p style="margin-bottom: 10px;">Enter Admin Approval Key:</p>
-                <input type="password" id="approval-key" placeholder="Key Required">
-                <button class="btn-main" onclick="unlockSettings()">VERIFY KEY</button>
-            </div>
-            <div id="settings-fields" class="hidden">
-                <p style="font-size: 0.8rem; color: #ff8c00; margin-bottom: 15px;">
-                    To change details, contact @torements or @yourboring with SS proof.
-                </p>
-                <input type="email" placeholder="New Email Address">
-                <input type="password" placeholder="New Password">
-                <button class="btn-main" style="background: #333;">REQUEST UPDATE</button>
-               
-                <hr style="margin: 20px 0; border: 0; border-top: 1px solid var(--border);">
-                <h4>DISPUTE CENTER</h4>
-                <input type="text" id="refund-id" placeholder="Enter Order ID">
-                <button class="btn-main" onclick="checkRefund()" style="background: #111; border: 1px solid var(--primary);">OPEN REFUND TICKET</button>
+
+            <div style="flex: 1.5;">
+                <h1 style="font-size: 2.5rem; margin-bottom: 20px;">ORDER HISTORY</h1>
+                <div id="order-history-log">
+                    <p style="color:var(--text-dim)">No orders found in local storage.</p>
+                </div>
             </div>
         </div>
+    </section>
+
+    <div id="crypto-overlay" class="page" style="display:flex; justify-content:center; align-items:center; background: rgba(0,0,0,0.95);">
+        <div class="crypto-modal" id="crypto-step-1">
+            <h2 style="margin-bottom: 10px;">SELECT PAYMENT</h2>
+            <div class="crypto-option" onclick="selectCrypto('BTC', '1NtpN3aPZowqEzX16E5cMUHQ16P9KHQtiy', 'fa-bitcoin', '#f2a900')">
+                <span><i class="fab fa-bitcoin" style="color:#f2a900"></i> Bitcoin</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="crypto-option" onclick="selectCrypto('ETH', '0x8cBc2AD1dF8c0e42465a9E80c1B84FeB0dEE0D87', 'fa-ethereum', '#627eea')">
+                <span><i class="fab fa-ethereum" style="color:#627eea"></i> Ethereum</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="crypto-option" onclick="selectCrypto('LTC', 'LhWYtDeDPfUtEpbJC2Pho7xQTXfEEXj6UY', 'fa-litecoin-sign', '#345d9d')">
+                <span><i class="fas fa-litecoin-sign" style="color:#345d9d"></i> Litecoin</span>
+                <i class="fas fa-chevron-right"></i>
+            </div>
+            <button onclick="navigateTo('cart')" style="background:transparent; color:white; border:none; margin-top:20px; cursor:pointer;">Cancel</button>
+        </div>
+
+        <div class="crypto-modal hidden" id="crypto-step-2">
+            <i id="selected-icon" class="fab" style="font-size: 4rem;"></i>
+            <h2 id="selected-name" style="margin-top:10px;">BTC PAYMENT</h2>
+            <p style="color:var(--text-dim); margin-bottom:20px;">Send exact total to address below:</p>
+            <div class="address-box" id="wallet-address">---</div>
+            <p style="font-size:0.7rem; color:var(--primary);">Order processes after 1 confirmation</p>
+            <button class="btn" style="background:var(--primary); color:white; width:100%; padding:15px; margin-top:20px; border-radius:10px;" onclick="confirmPayment()">I HAVE PAID</button>
+        </div>
     </div>
+
     <script>
-        // --- Data ---
-        const STOCK = {
-            home: [
-                { name: 'Spammed Pieces', price: 0.65, desc: '80% valid rate spammed pieces (good if u need leads)' }
-            ],
-            logs: Array(5).fill().map((_, i) => ({ name: `Premium Log #${i+1}`, price: 5.00, desc: '(description not yet decided)' })),
-            food: Array(5).fill().map((_, i) => ({ name: `Food Method #${i+1}`, price: 10.00, desc: '(description not yet decided)' }))
-        };
-        let currentUser = null;
+        // --- ⚙️ CONFIGURATION & ITEMS ---
+        const PRODUCTS = [
+            { id: 1, cat: 'shop', name: 'Spammed Pieces', price: 0.65, desc: '80% valid rate spammed pieces (good if u need leads)' },
+            { id: 2, cat: 'shop', name: '15 Spammed Pieces Bundle', price: 10.00, desc: 'Premium bulk leads bundle. High valid rate guaranteed.' },
+            { id: 3, cat: 'logs', name: 'Premium Log #1', price: 5.00, desc: '(description not yet decided)' },
+            { id: 4, cat: 'logs', name: 'Premium Log #2', price: 5.00, desc: '(description not yet decided)' },
+            { id: 5, cat: 'food', name: 'DoorDash B4U', price: 15.00, desc: '50% off your food order. Instant processing.' },
+            { id: 6, cat: 'food', name: 'UberEats Method', price: 25.00, desc: 'Private method for infinite food. (description not yet decided)' }
+        ];
+
         let cart = [];
-        // --- 1. Startup Logic ---
+        let orders = JSON.parse(localStorage.getItem('rak_orders')) || [];
+
+        // --- 🚀 INITIALIZATION ---
         window.onload = () => {
-            const welcome = document.getElementById('welcome-text');
-            const loader = document.getElementById('loader');
-           
-            // Text fades in
-            setTimeout(() => welcome.style.opacity = "1", 500);
-           
-            // Loader fades out
+            createStars();
             setTimeout(() => {
-                loader.classList.add('fade-out');
-                showAuth();
+                document.getElementById('global-loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('global-loader').classList.add('hidden');
+                    document.getElementById('main-header').classList.remove('hidden');
+                    navigateTo('shop');
+                }, 800);
             }, 2500);
         };
-        function showAuth() {
-            const wrap = document.getElementById('auth-wrap');
-            wrap.classList.add('fade-in');
-        }
-        function handleLogin() {
-            const u = document.getElementById('user-in').value;
-            if(!u) return alert("Enter Username");
-           
-            // Mock Auth using LocalStorage
-            currentUser = { username: u, orders: ['ORD-9921', 'ORD-4402'] }; // Mocking some order IDs
-            localStorage.setItem('rak_user', JSON.stringify(currentUser));
-            document.getElementById('auth-wrap').style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById('auth-wrap').classList.add('hidden');
-                document.getElementById('main-app').classList.add('fade-in');
-                switchPage('home');
-            }, 600);
-        }
-        // --- 2. Page Switching Logic ---
-        function switchPage(page, btn) {
-            const content = document.getElementById('page-content');
-           
-            // Smoothly fade out current content
-            content.style.opacity = "0";
-            content.style.transform = "translateY(10px)";
-            if(btn) {
-                document.querySelectorAll('.nav-bar button').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+
+        function createStars() {
+            const canvas = document.getElementById('bg-canvas');
+            for(let i=0; i<100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 3 + 'px';
+                star.style.width = size; star.style.height = size;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--d', (Math.random() * 3 + 2) + 's');
+                canvas.appendChild(star);
             }
-            setTimeout(() => {
-                renderItems(page);
-                content.style.opacity = "1";
-                content.style.transform = "translateY(0)";
-            }, 400);
         }
-        function renderItems(category) {
-            const container = document.getElementById('page-content');
-            let html = `<div class="grid">`;
-           
-            STOCK[category].forEach(item => {
-                html += `
-                    <div class="item-card slide-up" onclick="alert('Added to cart: ${item.name}')">
-                        <div class="price">$${item.price}</div>
-                        <h3>${item.name}</h3>
-                        <p style="color: var(--text-dim); font-size: 0.9rem;">${item.desc}</p>
-                        <button class="btn-main" style="margin-top:15px; font-size:0.7rem;">ADD TO CART</button>
+
+        // --- 🗺️ NAVIGATION SYSTEM ---
+        function navigateTo(pageId) {
+            // Smooth Loading Effect for every page change
+            const loader = document.getElementById('global-loader');
+            loader.classList.remove('hidden');
+            loader.style.opacity = '1';
+
+            setTimeout(() => {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('page-' + pageId)?.classList.add('active');
+                if(pageId === 'cart') renderCart();
+                if(pageId === 'profile') renderProfile();
+                if(pageId === 'shop' || pageId === 'logs' || pageId === 'food') renderShop(pageId);
+                
+                // Overlay for crypto is special
+                if(pageId === 'cart-overlay') {
+                    document.getElementById('crypto-overlay').classList.add('active');
+                } else {
+                    document.getElementById('crypto-overlay').classList.remove('active');
+                }
+
+                loader.style.opacity = '0';
+                setTimeout(() => loader.classList.add('hidden'), 600);
+            }, 500);
+        }
+
+        // --- 🛒 SHOP & CART LOGIC ---
+        function renderShop(cat) {
+            const grid = document.getElementById('shop-grid');
+            grid.innerHTML = '';
+            const filtered = PRODUCTS.filter(p => p.cat === (cat === 'shop' ? 'shop' : cat));
+            
+            filtered.forEach(p => {
+                grid.innerHTML += `
+                    <div class="card">
+                        <div class="price-tag">$${p.price.toFixed(2)}</div>
+                        <h3>${p.name}</h3>
+                        <p class="desc">${p.desc}</p>
+                        <button class="btn" style="background:var(--primary); color:white; width:100%; padding:12px; border-radius:8px;" onclick="addToCart(${p.id})">
+                            <i class="fas fa-cart-plus"></i> ADD TO CART
+                        </button>
                     </div>
                 `;
             });
-            html += `</div>`;
-            container.innerHTML = html;
         }
-        // --- 3. Profile & Admin Logic ---
-        function openProfile() {
-            document.getElementById('profile-modal').style.display = 'flex';
+
+        function addToCart(id) {
+            const item = PRODUCTS.find(p => p.id === id);
+            cart.push(item);
+            document.getElementById('cart-count').innerText = cart.length;
+            alert(item.name + " added to bag.");
         }
-        function closeModal() {
-            document.getElementById('profile-modal').style.display = 'none';
+
+        function renderCart() {
+            const list = document.getElementById('cart-items-list');
+            const totalDisplay = document.getElementById('total-price');
+            list.innerHTML = '';
+            let total = 0;
+
+            if(cart.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-dim)">Your cart is currently empty.</p>';
+            }
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="order-row">
+                        <div>
+                            <span style="font-weight:600">${item.name}</span><br>
+                            <span style="font-size:0.7rem; color:var(--text-dim)">SECURE DIGITAL ITEM</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:20px;">
+                            <span style="color:var(--primary); font-weight:900">$${item.price.toFixed(2)}</span>
+                            <i class="fas fa-trash" style="cursor:pointer; color:#444;" onclick="removeFromCart(${index})"></i>
+                        </div>
+                    </div>
+                `;
+            });
+            totalDisplay.innerText = '$' + total.toFixed(2);
         }
-        function unlockSettings() {
-            const key = document.getElementById('approval-key').value;
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            document.getElementById('cart-count').innerText = cart.length;
+            renderCart();
+        }
+
+        // --- 💳 CRYPTO GATEWAY ---
+        function openCheckout() {
+            if(cart.length === 0) return alert("Cart is empty.");
+            document.getElementById('crypto-step-1').classList.remove('hidden');
+            document.getElementById('crypto-step-2').classList.add('hidden');
+            navigateTo('cart-overlay');
+        }
+
+        function selectCrypto(name, addr, icon, color) {
+            document.getElementById('crypto-step-1').classList.add('hidden');
+            document.getElementById('crypto-step-2').classList.remove('hidden');
+            document.getElementById('selected-name').innerText = name + " PAYMENT";
+            document.getElementById('selected-icon').className = 'fab ' + icon;
+            document.getElementById('selected-icon').style.color = color;
+            document.getElementById('wallet-address').innerText = addr;
+        }
+
+        function confirmPayment() {
+            const orderId = 'RAK-' + Math.floor(100000 + Math.random() * 900000);
+            const newOrder = {
+                id: orderId,
+                items: [...cart],
+                date: new Date().toLocaleString(),
+                total: cart.reduce((a, b) => a + b.price, 0).toFixed(2)
+            };
+            
+            orders.push(newOrder);
+            localStorage.setItem('rak_orders', JSON.stringify(orders));
+            cart = [];
+            document.getElementById('cart-count').innerText = '0';
+            
+            alert("Payment signal sent! Order ID: " + orderId + ". Check Profile History.");
+            navigateTo('profile');
+        }
+
+        // --- 👤 PROFILE LOGIC ---
+        function renderProfile() {
+            const history = document.getElementById('order-history-log');
+            history.innerHTML = '';
+            
+            if(orders.length === 0) {
+                history.innerHTML = '<p style="color:var(--text-dim)">No orders found in local storage.</p>';
+                return;
+            }
+
+            orders.slice().reverse().forEach(o => {
+                history.innerHTML += `
+                    <div class="order-row">
+                        <div>
+                            <span style="color:var(--primary); font-weight:bold;">${o.id}</span><br>
+                            <span style="font-size:0.7rem;">${o.items.length} items purchased</span>
+                        </div>
+                        <div style="text-align:right">
+                            <span style="font-weight:bold;">$${o.total}</span><br>
+                            <span style="font-size:0.6rem; color:var(--text-dim)">${o.date}</span>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function unlockAdmin() {
+            const key = document.getElementById('admin-key-input').value;
             if(key === 'rak.tf776') {
-                document.getElementById('key-gate').classList.add('hidden');
-                document.getElementById('settings-fields').classList.remove('hidden');
+                document.getElementById('admin-gate').classList.add('hidden');
+                document.getElementById('admin-fields').classList.remove('hidden');
             } else {
-                alert("Invalid Approval Key");
+                alert("Invalid Access Key.");
             }
         }
-        function checkRefund() {
-            const oid = document.getElementById('refund-id').value;
-            const user = JSON.parse(localStorage.getItem('rak_user'));
-           
-            if(user.orders.includes(oid)) {
-                alert("ID Verified. Redirecting to support...");
-                window.open("https://t.me/torements", "_blank");
+
+        function requestRefund() {
+            const id = document.getElementById('refund-order-id').value;
+            const found = orders.find(o => o.id === id);
+            if(found) {
+                alert("Ticket Opened for " + id + ". Contact support @torements.");
             } else {
-                alert("Order ID not found in your local history. Dispute rejected.");
+                alert("Invalid Order ID. Must match your history.");
             }
         }
     </script>
