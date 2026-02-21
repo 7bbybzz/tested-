@@ -3,386 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RAK.TF | Neural Network Marketplace</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&family=Space+Mono&display=swap" rel="stylesheet">
-    
+    <title>rak.tf | Maintenance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #ff0f0f;
-            --primary-rgb: 255, 15, 15;
-            --bg: #020202;
-            --surface: #0a0a0a;
-            --card: #0d0d0d;
-            --border: #1a1a1a;
-            --text: #ffffff;
-            --transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        body {
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow: hidden;
+            height: 100vh;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
-
-        /* --- Global Animations --- */
-        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -100%; } }
-        .scanline { position: fixed; top: 0; left: 0; width: 100%; height: 100px; background: linear-gradient(0deg, rgba(255,15,15,0.05) 0%, transparent 100%); z-index: 1000; pointer-events: none; animation: scanline 8s linear infinite; }
-
-        /* --- Page Transition Engine --- */
-        .page-layer { 
-            position: fixed; inset: 0; padding: 100px 5% 40px; 
-            opacity: 0; transform: translateY(30px) scale(0.98); 
-            pointer-events: none; transition: var(--transition); 
-            overflow-y: auto; visibility: hidden;
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
         }
-        .page-layer.active { opacity: 1; transform: translateY(0) scale(1); pointer-events: all; visibility: visible; }
 
-        /* --- High-End Header --- */
-        header { 
-            position: fixed; top: 0; width: 100%; padding: 20px 5%; 
-            display: flex; justify-content: space-between; align-items: center; z-index: 2000;
-            background: rgba(2,2,2,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
         }
-        .nav-hub { display: flex; gap: 8px; background: #000; padding: 5px; border-radius: 12px; border: 1px solid var(--border); }
-        .nav-hub button { 
-            background: none; border: none; color: #555; padding: 10px 20px; 
-            border-radius: 8px; cursor: pointer; transition: 0.3s; font-weight: 600; font-size: 0.85rem;
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
         }
-        .nav-hub button.active { background: var(--primary); color: white; box-shadow: 0 0 20px rgba(255,15,15,0.3); }
 
-        /* --- Vouch Widget --- */
-        .vouch-wing {
-            position: fixed; left: 25px; bottom: 25px; z-index: 1500;
-            background: #111; border: 1px solid var(--border); padding: 12px 20px;
-            border-radius: 15px; text-decoration: none; color: white; display: flex; align-items: center; gap: 12px;
-            transition: 0.4s; overflow: hidden;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
-        .vouch-wing:hover { border-color: var(--primary); transform: scale(1.05); background: #0088cc; }
 
-        /* --- Product Grid --- */
-        .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-        .neon-card { 
-            background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 35px;
-            position: relative; transition: 0.4s; cursor: pointer; overflow: hidden;
+        .bank-icon {
+            filter: grayscale(1) brightness(1.5);
+            transition: all 0.3s ease;
         }
-        .neon-card:hover { border-color: var(--primary); transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-        .neon-card::after { content: 'VIEW ITEM'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(255,15,15,0.9); opacity: 0; transition: 0.3s; font-weight: 900; }
-        .neon-card:hover::after { opacity: 1; }
 
-        /* --- Payment & Checkout Hub --- */
-        .checkout-layout { display: grid; grid-template-columns: 1fr 400px; gap: 30px; }
-        .payment-option {
-            background: #111; border: 1px solid var(--border); border-radius: 15px; padding: 25px;
-            display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; margin-bottom: 15px;
+        .bank-icon:hover {
+            filter: grayscale(0) brightness(1);
+            transform: scale(1.1);
         }
-        .payment-option:hover { border-color: var(--primary); background: #1a0505; }
-        .payment-option.selected { border-color: var(--primary); background: rgba(255,15,15,0.1); box-shadow: 0 0 20px var(--primary-rgb, 0.2); }
-        .crypto-logo { height: 35px; width: 35px; object-fit: contain; }
 
-        /* --- ToS Toggle --- */
-        .tos-container { display: flex; align-items: center; gap: 12px; margin: 20px 0; padding: 15px; background: #0a0a0a; border-radius: 10px; border: 1px solid #222; }
-        .switch { position: relative; display: inline-block; width: 45px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; inset: 0; background: #333; transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background: var(--primary); }
-        input:checked + .slider:before { transform: translateX(21px); }
-
-        /* --- Notification Stack --- */
-        #notify-stack { position: fixed; top: 90px; right: 25px; z-index: 3000; display: flex; flex-direction: column; gap: 10px; }
-        .alert { background: #111; border-right: 4px solid var(--primary); padding: 15px 25px; border-radius: 8px; animation: slideIn 0.5s ease forwards; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-
-        /* --- Overlays --- */
-        .modal-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 4000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(15px); }
-        .modal-content { background: var(--card); border: 1px solid var(--border); width: 90%; max-width: 600px; padding: 40px; border-radius: 30px; }
-
-        @media (max-width: 900px) {
-            .checkout-layout { grid-template-columns: 1fr; }
-            header { padding: 15px 5%; }
-            .nav-hub button { padding: 8px 12px; font-size: 0.75rem; }
+        #inquiry-modal {
+            display: none;
+            opacity: 0;
         }
     </style>
 </head>
-<body>
+<body class="flex items-center justify-center">
 
-    <div class="scanline"></div>
-    <div id="notify-stack"></div>
-
-    <a href="https://t.me/rakTFv" target="_blank" class="vouch-wing">
-        <i class="fab fa-telegram" style="color:#0088cc; font-size:1.5rem;"></i>
-        <span style="font-weight: 900; letter-spacing: 1px;">VOUCHES</span>
-    </a>
-
-    <header>
-        <img src="https://i.ibb.co/KzhVm7vX/raklogo.png" class="logo" style="height:40px; cursor:pointer;" onclick="showPage('home')">
-        <nav class="nav-hub">
-            <button id="btn-home" class="active" onclick="showPage('home')">MARKET</button>
-            <button id="btn-logs" onclick="showPage('logs')">LOGS</button>
-            <button id="btn-food" onclick="showPage('food')">FOOD</button>
-        </nav>
-        <div style="display:flex; gap:20px;">
-            <div onclick="showPage('cart')" style="cursor:pointer; position:relative;">
-                <i class="fas fa-shopping-basket" style="font-size:1.4rem;"></i>
-                <span id="cart-indicator" style="position:absolute; -5px; -5px; background:var(--primary); width:12px; height:12px; border-radius:50%; display:none;"></span>
+    <div class="fixed top-8 left-8 z-50">
+        <a href="https://t.me/raktfv" target="_blank" class="group flex flex-col items-center gap-2">
+            <div class="glass p-4 rounded-full transition-transform group-hover:scale-110 group-hover:bg-blue-600/20">
+                <i class="fab fa-telegram text-3xl text-blue-400"></i>
             </div>
-            <i class="fas fa-user-circle" style="font-size:1.4rem; cursor:pointer;" onclick="showPage('profile')"></i>
-        </div>
-    </header>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-gray-400 group-hover:text-white">vouches/channel</span>
+        </a>
+    </div>
 
-    <main id="page-home" class="page-layer active">
-        <div style="margin-bottom:40px;">
-            <h1 style="font-size:3rem; font-weight:900;">STOCKED <span style="color:var(--primary)">ITEMS</span></h1>
-            <p style="color:#555;">Private digital assets, refreshed hourly.</p>
-        </div>
-        <div class="market-grid" id="market-target"></div>
-    </main>
+    <main class="text-center z-10">
+        <h1 class="text-8xl font-bold tracking-tighter mb-4 glow-text floating">rak.tf</h1>
+        <p class="text-gray-400 text-lg tracking-widest uppercase mb-8">
+            Under maintenance for <span class="text-white">better quality</span>
+        </p>
 
-    <main id="page-logs" class="page-layer">
-        <div style="text-align:center; padding:100px 0; border:1px dashed #222; border-radius:40px;">
-            <h1 style="font-family:'Space Mono'; letter-spacing:5px;">COMING BACK SOON!</h1>
-            <p style="color:var(--primary); margin-top:10px;">Checking server status...</p>
+        <div class="inline-block p-[1px] rounded-full bg-gradient-to-r from-transparent via-white/50 to-transparent">
+            <button onclick="openModal()" class="glass px-10 py-4 rounded-full hover:bg-white/10 transition-all duration-500 group">
+                rak (torements) inquiries <i class="fas fa-chevron-right ml-2 group-hover:translate-x-2 transition-transform"></i>
+            </button>
         </div>
     </main>
 
-    <main id="page-food" class="page-layer">
-        <div style="text-align:center; padding:100px 0; border:1px dashed #44ff44; border-radius:40px; background:rgba(68,255,68,0.02);">
-            <h1 style="font-family:'Space Mono'; color:#44ff44;">B4U COMING SOON!</h1>
-            <p style="color:#555; margin-top:10px;">DoorDash, UberEats, GrubHub methods.</p>
-        </div>
-    </main>
+    <div id="inquiry-modal" class="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+        <button onclick="closeModal()" class="fixed top-10 right-10 text-4xl text-gray-500 hover:text-white transition-colors">
+            <i class="fas fa-times"></i>
+        </button>
 
-    <main id="page-cart" class="page-layer">
-        <h1 style="margin-bottom:30px;">YOUR BAG</h1>
-        <div class="checkout-layout">
-            <div id="cart-items-list"></div>
-            <div style="background:var(--card); padding:30px; border-radius:25px; border:1px solid var(--border); height:fit-content;">
-                <h3>Summary</h3>
-                <div style="display:flex; justify-content:space-between; margin:20px 0; font-size:1.4rem; font-weight:900;">
-                    <span>Total</span><span id="cart-total-usd">$0.00</span>
-                </div>
-                
-                <div class="tos-container">
-                    <label class="switch">
-                        <input type="checkbox" id="tos-check">
-                        <span class="slider"></span>
-                    </label>
-                    <span style="font-size:0.8rem; color:#888;">I agree to the <span style="color:var(--primary)">Terms of Service</span> and Refund Policy.</span>
-                </div>
-
-                <button class="payment-trigger" onclick="proceedToPayment()" style="width:100%; padding:20px; background:var(--primary); border:none; color:white; font-weight:900; border-radius:15px; cursor:pointer;">SELECT PAYMENT METHOD</button>
-            </div>
-        </div>
-    </main>
-
-    <main id="page-payment" class="page-layer">
-        <h1 style="margin-bottom:20px;">CHOOSE CURRENCY</h1>
-        <p style="color:#555; margin-bottom:40px;">Live market data used for conversion.</p>
-        
-        <div style="max-width:600px; margin:0 auto;">
-            <div class="payment-option" onclick="selectCoin('btc')">
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <img src="https://cryptologos.cc/logos/bitcoin-btc-logo.svg" class="crypto-logo">
-                    <div>
-                        <div style="font-weight:900;">BITCOIN</div>
-                        <div style="font-size:0.7rem; color:#555;">Instant Confirmation</div>
-                    </div>
-                </div>
-                <div id="rate-btc" style="color:var(--primary); font-weight:600;">...</div>
-            </div>
-
-            <div class="payment-option" onclick="selectCoin('eth')">
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg" class="crypto-logo">
-                    <div>
-                        <div style="font-weight:900;">ETHEREUM</div>
-                        <div style="font-size:0.7rem; color:#555;">Low Fee Network</div>
-                    </div>
-                </div>
-                <div id="rate-eth" style="color:var(--primary); font-weight:600;">...</div>
-            </div>
-
-            <div class="payment-option" onclick="selectCoin('ltc')">
-                <div style="display:flex; align-items:center; gap:20px;">
-                    <img src="https://cryptologos.cc/logos/litecoin-ltc-logo.svg" class="crypto-logo">
-                    <div>
-                        <div style="font-weight:900;">LITECOIN</div>
-                        <div style="font-size:0.7rem; color:#555;">Cheapest Fees</div>
-                    </div>
-                </div>
-                <div id="rate-ltc" style="color:var(--primary); font-weight:600;">...</div>
-            </div>
+        <div class="glass max-w-2xl w-full p-12 text-center relative overflow-hidden">
+            <div class="absolute -top-10 -left-10 text-white/5 text-9xl font-black rotate-12 select-none">RAK</div>
             
-            <button class="payment-trigger" onclick="finalizePayment()" style="width:100%; margin-top:30px; padding:20px; background:#111; border:1px solid var(--primary); color:white; font-weight:900; border-radius:15px; cursor:pointer;">GENERATE WALLET ADDRESS</button>
-        </div>
-    </main>
-
-    <div id="detail-modal" class="modal-wrap">
-        <div class="modal-content">
-            <h2 id="det-name" style="font-size:2rem; font-weight:900;">Item Name</h2>
-            <p id="det-desc" style="color:#888; margin:20px 0; line-height:1.6;"></p>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-                <div style="display:flex; align-items:center; gap:15px; background:#000; padding:10px 20px; border-radius:50px; border:1px solid #222;">
-                    <i class="fas fa-minus" onclick="modQty(-1)" style="cursor:pointer;"></i>
-                    <span id="det-qty" style="font-weight:900; width:30px; text-align:center;">1</span>
-                    <i class="fas fa-plus" onclick="modQty(1)" style="cursor:pointer;"></i>
+            <h2 id="modal-title" class="text-4xl font-bold mb-2">Welcome to rak and fentys logs!</h2>
+            <p class="text-blue-400 font-mono mb-8 tracking-widest uppercase">Serious Inquiries Only</p>
+            
+            <div class="bg-white/5 p-6 rounded-xl mb-8 border border-white/10">
+                <p class="text-xl mb-6">Logs with balance are now <span class="text-green-400 font-bold">AVAILABLE</span></p>
+                
+                <div class="grid grid-cols-3 gap-8 items-center mb-8">
+                    <div class="flex flex-col items-center gap-2">
+                        <i class="fas fa-university text-4xl bank-icon"></i>
+                        <span class="text-[10px] text-gray-500">CHASE</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <i class="fas fa-landmark text-4xl bank-icon"></i>
+                        <span class="text-[10px] text-gray-500">BoFA</span>
+                    </div>
+                    <div class="flex flex-col items-center gap-2">
+                        <i class="fas fa-building-columns text-4xl bank-icon"></i>
+                        <span class="text-[10px] text-gray-500">WELLS</span>
+                    </div>
                 </div>
-                <div id="det-price" style="font-size:2rem; font-weight:900; color:var(--primary);">$0.00</div>
+
+                <p class="text-lg font-bold text-white mb-2">YES, we have new logs with balance sitting!</p>
+                <p class="text-gray-400">PM <span class="text-white">@torements</span> for serious inquiries</p>
             </div>
-            <button onclick="commitToCart()" style="width:100%; padding:20px; background:var(--primary); border:none; color:white; font-weight:900; border-radius:15px; cursor:pointer;">ADD TO SECURE BAG</button>
-            <center><p onclick="closeModals()" style="margin-top:20px; cursor:pointer; color:#444;">CLOSE VIEW</p></center>
+
+            <a href="https://t.me/torements" class="inline-block bg-white text-black px-12 py-4 rounded-lg font-bold hover:bg-gray-200 transition-colors">
+                SEE DETAILS NOW !
+            </a>
         </div>
     </div>
 
+    <div class="absolute top-0 left-0 w-full h-full pointer-events-none">
+        <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]"></div>
+    </div>
+
     <script>
-        const PRODUCTS = [
-            { id: 101, name: 'Spammed Pieces', price: 1.25, desc: 'Individual high-quality spammed pieces. Optimized for lead generation and initial bypasses. 80% valid rate.' },
-            { id: 102, name: '20 Spammed Pieces', price: 15.00, desc: 'Bulk bundle for professional operators. Includes 20 premium pieces at a discounted rate.' }
-        ];
-
-        let cart = [];
-        let curItem = null;
-        let curQty = 1;
-        let cryptoPrices = { btc:0, eth:0, ltc:0 };
-        let selectedCoin = null;
-
-        window.onload = () => {
-            renderMarket();
-            fetchRates();
-            updateCartDot();
-        };
-
-        async function fetchRates() {
-            try {
-                const r = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,litecoin&vs_currencies=usd');
-                const d = await r.json();
-                cryptoPrices = { btc: d.bitcoin.usd, eth: d.ethereum.usd, ltc: d.litecoin.usd };
-            } catch(e) { console.log("Rate sync failed."); }
-        }
-
-        function renderMarket() {
-            const h = document.getElementById('market-target');
-            h.innerHTML = PRODUCTS.map(p => `
-                <div class="neon-card" onclick="openDetail(${p.id})">
-                    <div style="font-size:1.8rem; font-weight:900; color:var(--primary);">$${p.price.toFixed(2)}</div>
-                    <h3 style="margin-top:10px;">${p.name}</h3>
-                    <p style="color:#555; font-size:0.85rem; margin-top:5px;">Secure Digital Asset</p>
-                </div>
-            `).join('');
-        }
-
-        function showPage(id) {
-            document.querySelectorAll('.page-layer').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-hub button').forEach(b => b.classList.remove('active'));
+        function openModal() {
+            const modal = document.getElementById('inquiry-modal');
+            modal.style.display = 'flex';
             
-            document.getElementById('page-' + id).classList.add('active');
-            const navBtn = document.getElementById('btn-' + id);
-            if(navBtn) navBtn.classList.add('active');
-
-            if(id === 'cart') renderCart();
+            gsap.to(modal, { opacity: 1, duration: 0.5 });
+            gsap.fromTo("#modal-title", 
+                { scale: 0.5, y: 50, opacity: 0 }, 
+                { scale: 1, y: 0, opacity: 1, duration: 0.8, ease: "back.out(1.7)" }
+            );
         }
 
-        function openDetail(id) {
-            curItem = PRODUCTS.find(p => p.id === id);
-            curQty = 1;
-            document.getElementById('det-name').innerText = curItem.name;
-            document.getElementById('det-desc').innerText = curItem.desc;
-            updateDetailUI();
-            document.getElementById('detail-modal').style.display = 'flex';
-        }
-
-        function modQty(v) {
-            curQty = Math.max(1, curQty + v);
-            updateDetailUI();
-        }
-
-        function updateDetailUI() {
-            document.getElementById('det-qty').innerText = curQty;
-            document.getElementById('det-price').innerText = '$' + (curItem.price * curQty).toFixed(2);
-        }
-
-        function commitToCart() {
-            cart.push({ ...curItem, qty: curQty });
-            updateCartDot();
-            closeModals();
-            pushNotify(`${curQty}x ${curItem.name} added to neural bag.`);
-        }
-
-        function renderCart() {
-            const list = document.getElementById('cart-items-list');
-            let total = 0;
-            list.innerHTML = cart.length ? '' : '<p style="color:#444;">Bag is empty.</p>';
-            cart.forEach((item, i) => {
-                total += (item.price * item.qty);
-                list.innerHTML += `
-                    <div style="background:#0a0a0a; padding:20px; border-radius:15px; border:1px solid #1a1a1a; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
-                        <div>
-                            <h4>${item.qty}x ${item.name}</h4>
-                            <span style="color:var(--primary);">$${(item.price * item.qty).toFixed(2)}</span>
-                        </div>
-                        <i class="fas fa-trash" style="color:#333; cursor:pointer;" onclick="dropItem(${i})"></i>
-                    </div>
-                `;
+        function closeModal() {
+            const modal = document.getElementById('inquiry-modal');
+            gsap.to(modal, { 
+                opacity: 0, 
+                duration: 0.3, 
+                onComplete: () => { modal.style.display = 'none'; } 
             });
-            document.getElementById('cart-total-usd').innerText = '$' + total.toFixed(2);
         }
 
-        function dropItem(i) {
-            cart.splice(i, 1);
-            renderCart();
-            updateCartDot();
-        }
-
-        function proceedToPayment() {
-            if(!document.getElementById('tos-check').checked) {
-                return pushNotify("You must accept Terms of Service first.");
-            }
-            if(cart.length === 0) return pushNotify("Bag is empty.");
+        // Background Mouse Move Effect
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const xPos = (clientX / window.innerWidth - 0.5) * 20;
+            const yPos = (clientY / window.innerHeight - 0.5) * 20;
             
-            const total = cart.reduce((a,b) => a + (b.price * b.qty), 0);
-            document.getElementById('rate-btc').innerText = (total / cryptoPrices.btc).toFixed(6) + ' BTC';
-            document.getElementById('rate-eth').innerText = (total / cryptoPrices.eth).toFixed(6) + ' ETH';
-            document.getElementById('rate-ltc').innerText = (total / cryptoPrices.ltc).toFixed(6) + ' LTC';
-            
-            showPage('payment');
-        }
-
-        function selectCoin(c) {
-            selectedCoin = c;
-            document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            pushNotify(`${c.toUpperCase()} selected.`);
-        }
-
-        function finalizePayment() {
-            if(!selectedCoin) return pushNotify("Select a payment method.");
-            pushNotify("Generating Secure Address...");
-            // Simulate integration
-            setTimeout(() => {
-                alert("PAYMENT INTEGRATION INITIATED\nIn a real build, this would connect to your BTCPayServer or Coinbase Commerce API.");
-                cart = [];
-                updateCartDot();
-                showPage('home');
-            }, 1000);
-        }
-
-        function pushNotify(msg) {
-            const stack = document.getElementById('notify-stack');
-            const alert = document.createElement('div');
-            alert.className = 'alert';
-            alert.innerHTML = `<i class="fas fa-circle-notch fa-spin" style="margin-right:10px; font-size:0.8rem;"></i> ${msg}`;
-            stack.appendChild(alert);
-            setTimeout(() => {
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 500);
-            }, 3000);
-        }
-
-        function updateCartDot() {
-            document.getElementById('cart-indicator').style.display = cart.length ? 'block' : 'none';
-        }
-
-        function closeModals() {
-            document.querySelectorAll('.modal-wrap').forEach(m => m.style.display = 'none');
-        }
+            gsap.to(".floating", {
+                x: xPos,
+                y: yPos,
+                duration: 2,
+                ease: "power2.out"
+            });
+        });
     </script>
 </body>
 </html>
